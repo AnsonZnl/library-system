@@ -1,63 +1,55 @@
-<a href="https://github.com/TencentCloudBase/cloudbase-templates"><img src="https://main.qcloudimg.com/raw/9892a3212a49bdd65ba499f2da62ac23.png"></a>
+English | [简体中文](./README.zh-CN.md)
 
-# Vue 全栈应用示例
+<h1 align="center">Ant Design Vue Pro</h1>
+<div align="center">
+An out-of-box UI solution for enterprise applications as a Vue boilerplate. based on  <a href="https://vuecomponent.github.io/ant-design-vue/docs/vue/introduce-cn/" target="_blank">Ant Design of Vue</a>
+</div>
 
-这个目录是基于云开发的一个 [Vue](https://cn.vuejs.org/) 全栈应用示例，包含 Vue + 云函数 + 静态网站部署，可以基于 **[CloudBase Framework](https://github.com/TencentCloudBase/cloudbase-framework)** 框架将项目一键部署到云开发环境
+<div align="center">
 
-## 线上演示地址
+[![License](https://img.shields.io/npm/l/package.json.svg?style=flat)](https://github.com/vueComponent/ant-design-vue-pro/blob/master/LICENSE)
+[![Release](https://img.shields.io/github/release/vueComponent/ant-design-vue-pro.svg?style=flat)](https://github.com/vueComponent/ant-design-vue-pro/releases/latest)
+[![Travis branch](https://travis-ci.org/vueComponent/ant-design-vue-pro.svg?branch=master)](https://travis-ci.org/vueComponent/ant-design-vue-pro)
 
-[https://framework-1258016615.tcloudbaseapp.com/vue/](https://framework-1258016615.tcloudbaseapp.com/vue/)
+</div>
 
-点击下方按钮使用 [CloudBase Framework](https://github.com/TencentCloudBase/cloudbase-framework) 可以在云端一键部署本项目到自己的云开发账号上。
+- Preview: https://preview.pro.antdv.com
+- Home Page: https://pro.antdv.com
+- Documentation: https://pro.antdv.com/docs/getting-started
+- ChangeLog: https://pro.antdv.com/docs/changelog
+- FAQ: https://pro.antdv.com/docs/faq
 
-[![](https://main.qcloudimg.com/raw/67f5a389f1ac6f3b4d04c7256438e44f.svg)](https://console.cloud.tencent.com/tcb/env/index?action=CreateAndDeployCloudBaseProject&tdl_anchor=github&tdl_site=0&appUrl=https%3A%2F%2Fgithub.com%2FTencentCloudBase%2Fcloudbase-templates&workDir=vue&appName=vue)
+Overview
+----
 
-## 部署一个 Vue 全栈应用
+![dashboard](https://static-2.loacg.com/open/static/github/sp3.png)
 
-### 步骤一. 准备工作
+### Env and dependencies
 
-具体步骤请参照 [准备云开发环境和 CloudBase CLI 命令工具](https://github.com/TencentCloudBase/cloudbase-framework/blob/master/CLI_GUIDE.md)
+- node
+- eslint
+- @vue/cli
+- [ant-design-vue](https://github.com/vueComponent/ant-design-vue) - Ant Design Of Vue 
 
-### 步骤二. 初始化应用示例
-
-在命令行执行
-
-```bash
-tcb new vue-app vue
+## Project setup
+```
+npm install
 ```
 
-### 步骤三. 一键部署
-
-进入到项目目录，在命令行执行
-
-```bash
-tcb framework deploy
+### Compiles and hot-reloads for development
+```
+npm run serve
 ```
 
-## 开发命令及配置
-
-### 本地开发
-
+### Compiles and minifies for production
 ```
-npm run dev
+npm run build
 ```
 
-### 上线部署
-
-```
-npm run deploy
-```
-
-### Lint
-
+### Lints and fixes files
 ```
 npm run lint
 ```
 
-### CloudBase Framework 相关开发配置
-
-查看 [CloudBase Framework 配置](https://github.com/TencentCloudBase/cloudbase-framework).
-
-### Vue 相关开发配置
-
-查看 [Configuration Reference](https://cli.vuejs.org/config/).
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).

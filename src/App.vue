@@ -1,34 +1,25 @@
 <template>
-  <div id="app">
-    <img class="logo" alt="CloudBase logo" src="./assets/cloudbase.png" />
-    <img class="logo" alt="Vue logo" src="./assets/logo.png" />
-    <HelloWorld msg="欢迎使用云开发 CloudBase Vue.js App" />
-  </div>
+  <a-config-provider :locale="locale">
+    <div id="app">
+      <router-view />
+    </div>
+  </a-config-provider>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
+import { domTitle, setDocumentTitle } from '@/utils/domUtil'
+import { i18nRender } from '@/locales'
 
 export default {
-  name: "App",
-  components: {
-    HelloWorld,
+  name: 'App',
+  computed: {
+    locale () {
+      // sync dom title
+      const { title } = this.$route.meta
+      title && (setDocumentTitle(`${i18nRender(title)} - ${domTitle}`))
+
+      return this.$i18n.getLocaleMessage(this.$store.getters.lang).antLocale
+    },
   },
-};
+}
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-
-.logo {
-  width: 120px;
-  padding: 10px;
-}
-</style>

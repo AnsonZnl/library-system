@@ -1,0 +1,20 @@
+{
+    "name": "server",
+    "main": "tcbindex.js",
+    "dependencies": {
+        "express": "^4.17.1",
+        "serverless-http": "^2.3.2",
+        "debug": "^4.1.1",
+        "koa": "^2.7.0",
+        "koa-bodyparser": "^4.2.1",
+        "koa-convert": "^1.2.0",
+        "koa-json": "^2.0.2",
+        "koa-logger": "^3.2.0",
+        "koa-onerror": "^4.1.0",
+        "koa-router": "^7.4.0",
+        "koa-static": "^5.0.0",
+        "koa-views": "^6.2.0",
+        "pug": "^2.0.3",
+        "@cloudbase/node-sdk": "1.1.1"
+    }
+}

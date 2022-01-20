@@ -1,0 +1,48 @@
+{
+    "version": "2.0",
+    "envId": "library-system-dev-3dm1b8e388467",
+    "$schema": "https://framework-1258016615.tcloudbaseapp.com/schema/latest.json",
+    "functionRoot": "cloudfunctions",
+    "framework": {
+        "name": "library-system",
+        "plugins": {
+            "client": {
+                "use": "@cloudbase/framework-plugin-website",
+                "inputs": {
+                    "buildCommand": "npm run build",
+                    "outputPath": "dist",
+                    "cloudPath": "/",
+                    "envVariables": {
+                        "VUE_APP_ENV_ID": "{{env.ENV_ID}}"
+                    }
+                }
+            },
+            "server": {
+                "use": "@cloudbase/framework-plugin-function",
+                "inputs": {
+                    "functionRootPath": "cloudfunctions",
+                    "functions": [{
+                        "name": "server",
+                        "timeout": 5,
+                        "handler": "tcbindex.main",
+                        "memory": 128,
+                        "aclRule": {
+                            "invoke": true
+                        }
+                    }]
+                }
+            },
+            "auth": {
+                "use": "@cloudbase/framework-plugin-auth",
+                "inputs": {
+                    "configs": [{
+                        "platform": "NONLOGIN",
+                        "status": "ENABLE"
+                    }]
+                }
+            }
+        }
+    },
+    "functions": [],
+    "region": "ap-shanghai"
+}

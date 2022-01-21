@@ -77,9 +77,10 @@ router.post("/query", async function(ctx, next) {
     console.log("query", body, page, size);
 
     let res = await booksDB.where(body).skip(page).limit(size).get();
+    let count = await booksDB.where(body).count();
     ctx.body = {
         code: 20000,
-        data: res.data,
+        data: { list: res.data, total: count.total },
     };
     ctx.status = 200;
 });

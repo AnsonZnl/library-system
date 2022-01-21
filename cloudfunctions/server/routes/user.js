@@ -36,7 +36,7 @@ router.get("/info", function(ctx, next) {
     ctx.status = 200;
 });
 
-router.get("/logout", function(ctx, next) {
+router.post("/logout", function(ctx, next) {
     // ctx.body = ctx.request.body;
     let { password, username } = ctx.request.body;
     console.log({ password, username });

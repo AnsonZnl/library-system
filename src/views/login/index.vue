@@ -87,11 +87,7 @@ export default {
     }
   },
   created(){
-  request.get('/json').then(res=>{
-      console.log(res)
-    }).catch(err=>{
-      console.error(err)
-    })
+    
   },
   watch: {
     $route: {

@@ -1,6 +1,64 @@
 <template>
   <div class="app-container">
-    <el-form ref="form" :model="form" label-width="120px">
+    <el-table
+    :data="list"
+    border
+    style="width: 100%">
+    <el-table-column
+      fixed
+      prop="createTime"
+      label="入库日期"
+      width="200"
+      >
+    </el-table-column>
+    <el-table-column
+      prop="name"
+      label="书籍名称"
+      >
+    </el-table-column>
+    <el-table-column
+      prop="isbn"
+      label="书籍编码"
+      >
+    </el-table-column>
+    <el-table-column
+      prop="author"
+      label="作者"
+      >
+    </el-table-column>
+    <el-table-column
+      prop="stock"
+      label="库存"
+      >
+    </el-table-column>
+    <el-table-column
+      prop="shelfNumber"
+      label="书架位置"
+      >
+    </el-table-column>
+    <el-table-column
+      prop="pressPrice"
+      label="价钱"
+      >
+    </el-table-column>
+    <el-table-column
+      prop="descript"
+      label="描述"
+      >
+    </el-table-column>
+    <el-table-column
+      fixed="right"
+      label="操作"
+      width="150">
+      <template slot-scope="scope">
+        <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
+        <el-button type="text" size="small">编辑</el-button>
+      </template>
+    </el-table-column>
+  </el-table>
+
+<el-dialog title="添加图书" :visible.sync="showAddBooks">
+      <el-form ref="form" :model="form" label-width="120px">
       <el-form-item label="Activity name">
         <el-input v-model="form.name" />
       </el-form-item>
@@ -44,13 +102,19 @@
         <el-button @click="onCancel">Cancel</el-button>
       </el-form-item>
     </el-form>
+</el-dialog>
   </div>
 </template>
 
 <script>
+import {getList} from '@/api/books'
+
+// import { getList } from '@/api/table'
 export default {
   data() {
     return {
+      list: [],
+showAddBooks: false,
       form: {
         name: '',
         region: '',
@@ -62,6 +126,18 @@ export default {
         desc: ''
       }
     }
+  },
+  created(){
+    getList({page:1,size:10},{}).then((res) => {
+        console.log(res);
+        this.list = res.data
+        this.list.forEach(e=>{
+          let d = new Date(e.createTime)
+          e.createTime = d.toLocaleDateString() + d.toLocaleTimeString()
+        })
+    }).catch((err) => {
+      console.error(err);
+    });
   },
   methods: {
     onSubmit() {

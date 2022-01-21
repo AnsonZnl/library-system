@@ -1,98 +1,104 @@
-import storage from 'store'
-import { login, getInfo, logout } from '@/api/auth/user'
-import { ACCESS_TOKEN } from '@/store/mutation-types'
+import { login, logout, getInfo } from "@/api/user";
+import { getToken, setToken, removeToken } from "@/utils/auth";
+import { resetRouter } from "@/router";
 
-const user = {
-    state: {
-        token: '',
-        name: '',
-        welcome: '',
-        avatar: '',
-        roles: [],
-        info: {},
+const getDefaultState = () => {
+    return {
+        token: getToken(),
+        name: "",
+        avatar: "",
+    };
+};
+
+const state = getDefaultState();
+
+const mutations = {
+    RESET_STATE: (state) => {
+        Object.assign(state, getDefaultState());
     },
-
-    mutations: {
-        SET_TOKEN: (state, token) => {
-            state.token = token
-        },
-        SET_NAME: (state, { name, welcome }) => {
-            state.name = name
-            state.welcome = welcome
-        },
-        SET_AVATAR: (state, avatar) => {
-            state.avatar = avatar
-        },
-        SET_ROLES: (state, roles) => {
-            state.roles = roles
-        },
-        SET_INFO: (state, info) => {
-            state.info = info
-        },
+    SET_TOKEN: (state, token) => {
+        state.token = token;
     },
+    SET_NAME: (state, name) => {
+        state.name = name;
+    },
+    SET_AVATAR: (state, avatar) => {
+        state.avatar = avatar;
+    },
+};
 
-    actions: {
-        // 登录
-        Login({ commit }, userInfo) {
-            return new Promise((resolve, reject) => {
-                login(userInfo).then(response => {
-                    console.log('res:', response)
-                    const { token } = response
-                    storage.set(ACCESS_TOKEN, token)
-                    commit('SET_TOKEN', token)
-                    resolve()
-                }).catch(error => {
-                    reject(error)
+const actions = {
+    // user login
+    login({ commit }, userInfo) {
+        const { username, password } = userInfo;
+        return new Promise((resolve, reject) => {
+            login({ username: username.trim(), password: password })
+                .then((response) => {
+                    console.log("res", response);
+                    const { data } = response;
+                    commit("SET_TOKEN", data.token);
+                    setToken(data.token);
+                    resolve();
                 })
-            })
-        },
+                .catch((error) => {
+                    console.log("err", error);
+                    reject(error);
+                });
+        });
+    },
 
-        // 获取用户信息
-        GetInfo({ commit }) {
-            return new Promise((resolve, reject) => {
-                getInfo().then(response => {
-                    if (response.role && response.role.permissions.length > 0) {
-                        const role = response.role
-                        role.permissions = response.role.permissions
-                        role.permissions.map(per => {
-                            if (per.actionEntitySet != null && per.actionEntitySet.length > 0) {
-                                const action = per.actionEntitySet.map(action => { return action.action })
-                                per.actionList = action
-                            }
-                        })
-                        role.permissionList = role.permissions.map(permission => { return permission.permissionId })
-                        commit('SET_ROLES', response.role)
-                        commit('SET_INFO', response)
-                    } else {
-                        reject(new Error('getInfo: roles must be a non-null array !'))
+    // get user info
+    getInfo({ commit, state }) {
+        return new Promise((resolve, reject) => {
+            getInfo(state.token)
+                .then((response) => {
+                    const { data } = response;
+
+                    if (!data) {
+                        return reject("Verification failed, please Login again.");
                     }
 
-                    commit('SET_NAME', { name: response.name, welcome: '' })
-                    commit('SET_AVATAR', response.avatar)
+                    const { name, avatar } = data;
 
-                    resolve(response)
-                }).catch(error => {
-                    reject(error)
+                    commit("SET_NAME", name);
+                    commit("SET_AVATAR", avatar);
+                    resolve(data);
                 })
-            })
-        },
-
-        // 登出
-        Logout({ commit, state }) {
-            return new Promise((resolve) => {
-                logout(state.token).then(() => {
-                    resolve()
-                }).catch(() => {
-                    resolve()
-                }).finally(() => {
-                    commit('SET_TOKEN', '')
-                    commit('SET_ROLES', [])
-                    storage.remove(ACCESS_TOKEN)
-                })
-            })
-        },
-
+                .catch((error) => {
+                    reject(error);
+                });
+        });
     },
-}
 
-export default user
+    // user logout
+    logout({ commit, state }) {
+        return new Promise((resolve, reject) => {
+            logout(state.token)
+                .then(() => {
+                    removeToken(); // must remove  token  first
+                    resetRouter();
+                    commit("RESET_STATE");
+                    resolve();
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        });
+    },
+
+    // remove token
+    resetToken({ commit }) {
+        return new Promise((resolve) => {
+            removeToken(); // must remove  token  first
+            commit("RESET_STATE");
+            resolve();
+        });
+    },
+};
+
+export default {
+    namespaced: true,
+    state,
+    mutations,
+    actions,
+};

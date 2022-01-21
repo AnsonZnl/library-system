@@ -1,147 +1,121 @@
+'use strict'
 const path = require('path')
-const webpack = require('webpack')
-const { IgnorePlugin } = require('webpack')
-const { createMockMiddleware } = require('umi-mock-middleware')
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
-const createThemeColorReplacerPlugin = require('./config/theme.plugin')
-const GitRevisionPlugin = require('git-revision-webpack-plugin')
-const GitRevision = new GitRevisionPlugin()
-const buildDate = JSON.stringify(new Date().toLocaleString())
+const defaultSettings = require('./src/settings.js')
 
-// const isProd = process.env.NODE_ENV === 'production'
-const isUseCDN = process.env.IS_USE_CDN === 'true'
-const isAnalyz = process.env.IS_ANALYZ === 'true'
-
-function resolve (dir) {
-  return path.join(__dirname, dir)
+function resolve(dir) {
+    return path.join(__dirname, dir)
 }
 
-// check Git
-function getGitHash () {
-  try {
-    return GitRevision.version()
-  } catch (e) {}
-  return 'unknown'
-}
+const name = defaultSettings.title || 'vue Admin Template' // page title
 
-const assetsCDN = {
-  externals: {
-    vue: 'Vue',
-    vuex: 'Vuex',
-    'vue-router': 'VueRouter',
-  },
-  assets: {
-    css: [],
-    // https://unpkg.com/:package@:version/:file
-    // https://cdn.jsdelivr.net/package:version/:file
-    js: [
-      '//cdn.jsdelivr.net/npm/vue@latest/dist/vue.min.js',
-      '//cdn.jsdelivr.net/npm/vue-router@latest/dist/vue-router.min.js',
-      '//cdn.jsdelivr.net/npm/vuex@latest/dist/vuex.min.js',
-    ],
-  },
-}
+// If your port is set to 80,
+// use administrator privileges to execute the command line.
+// For example, Mac: sudo npm run
+// You can change the port by the following methods:
+// port = 9528 npm run dev OR npm run dev --port = 9528
+const port = process.env.port || process.env.npm_config_port || 9528 // dev port
 
-// vue.config
-const vueConfig = {
-  configureWebpack: {
-    plugins: [
-      // Ignore all locale files of moment.js
-      new IgnorePlugin(/^\.\/locale$/, /moment$/),
-      new webpack.DefinePlugin({
-        APP_VERSION: `"${require('./package.json').version}"`,
-        GIT_HASH: JSON.stringify(getGitHash()),
-        BUILD_DATE: buildDate,
-      }),
-    ],
-    resolve: {
-      alias: {
-        '@ant-design/icons/lib/dist$': resolve('./src/icons.js'),
-      },
-    },
-    externals: isUseCDN ? assetsCDN.externals : {},
-  },
-  chainWebpack: config => {
-    // replace svg-loader
-    const svgRule = config.module.rule('svg')
-    svgRule.uses.clear()
-
-    svgRule.oneOf('inline')
-      .resourceQuery(/inline/)
-      .use('vue-svg-icon-loader')
-      .loader('vue-svg-icon-loader')
-      .end()
-      .end()
-      .oneOf('external')
-      .use('file-loader')
-      .loader('file-loader')
-      .options({
-        name: 'assets/[name].[hash:8].[ext]',
-      })
-
-    // if `IS_USE_CDN` env is TRUE require on cdn assets
-    isUseCDN && config.plugin('html').tap(args => {
-      args[0].cdn = assetsCDN.assets
-      return args
-    })
-    // if `IS_ANALYZ` env is TRUE on report bundle info
-    isAnalyz && config.plugin('webpack-report').use(BundleAnalyzerPlugin, [
-      {
-        analyzerMode: 'static',
-      },
-    ])
-  },
-  // style config
-  css: {
-    loaderOptions: {
-      less: {
-        modifyVars: {
-          // less vars，customize ant design theme
-          'border-radius-base': '2px',
+// All configuration item explanations can be find in https://cli.vuejs.org/config/
+module.exports = {
+    /**
+     * You will need to set publicPath if you plan to deploy your site under a sub path,
+     * for example GitHub Pages. If you plan to deploy your site to https://foo.github.io/bar/,
+     * then publicPath should be set to "/bar/".
+     * In most cases please use '/' !!!
+     * Detail: https://cli.vuejs.org/config/#publicpath
+     */
+    publicPath: '/',
+    outputDir: 'dist',
+    assetsDir: 'static',
+    lintOnSave: process.env.NODE_ENV === 'development',
+    productionSourceMap: false,
+    devServer: {
+        port: port,
+        open: true,
+        overlay: {
+            warnings: false,
+            errors: true
         },
-        // DO NOT REMOVE THIS LINE
-        javascriptEnabled: true,
-      },
+        before: require('./mock/mock-server.js')
     },
-  },
-  devServer: {
-    // development server port 8000
-    port: 8000,
-    // mock serve
-    before: app => {
-      if (process.env.MOCK !== 'none' && process.env.HTTP_MOCK !== 'none') {
-        app.use(createMockMiddleware())
-      }
+    configureWebpack: {
+        // provide the app's title in webpack's name field, so that
+        // it can be accessed in index.html to inject the correct title.
+        name: name,
+        resolve: {
+            alias: {
+                '@': resolve('src')
+            }
+        }
     },
-    // If you want to turn on the proxy, please remove the mockjs /src/main.jsL11
-    // proxy: {
-    //   '/api': {
-    //     // backend url
-    //     target: 'http://localhost:8080/gateway',
-    //     ws: false,
-    //     changeOrigin: true,
-    //     pathRewrite: {
-    //       '^/api': '',
-    //     },
-    //   },
-    // },
-  },
-  /* ADVANCED SETTINGS */
+    chainWebpack(config) {
+        // it can improve the speed of the first screen, it is recommended to turn on preload
+        config.plugin('preload').tap(() => [{
+            rel: 'preload',
+            // to ignore runtime.js
+            // https://github.com/vuejs/vue-cli/blob/dev/packages/@vue/cli-service/lib/config/app.js#L171
+            fileBlacklist: [/\.map$/, /hot-update\.js$/, /runtime\..*\.js$/],
+            include: 'initial'
+        }])
 
-  // disable source map in production
-  productionSourceMap: false,
-  // ESLint Check: DISABLE for false
-  // Type: boolean | 'warning' | 'default' | 'error'
-  lintOnSave: 'warning',
-  // babel-loader no-ignore node_modules/*
-  transpileDependencies: [],
+        // when there are many pages, it will cause too many meaningless requests
+        config.plugins.delete('prefetch')
+
+        // set svg-sprite-loader
+        config.module
+            .rule('svg')
+            .exclude.add(resolve('src/icons'))
+            .end()
+        config.module
+            .rule('icons')
+            .test(/\.svg$/)
+            .include.add(resolve('src/icons'))
+            .end()
+            .use('svg-sprite-loader')
+            .loader('svg-sprite-loader')
+            .options({
+                symbolId: 'icon-[name]'
+            })
+            .end()
+
+        config
+            .when(process.env.NODE_ENV !== 'development',
+                config => {
+                    config
+                        .plugin('ScriptExtHtmlWebpackPlugin')
+                        .after('html')
+                        .use('script-ext-html-webpack-plugin', [{
+                            // `runtime` must same as runtimeChunk name. default is `runtime`
+                            inline: /runtime\..*\.js$/
+                        }])
+                        .end()
+                    config
+                        .optimization.splitChunks({
+                            chunks: 'all',
+                            cacheGroups: {
+                                libs: {
+                                    name: 'chunk-libs',
+                                    test: /[\\/]node_modules[\\/]/,
+                                    priority: 10,
+                                    chunks: 'initial' // only package third parties that are initially dependent
+                                },
+                                elementUI: {
+                                    name: 'chunk-elementUI', // split elementUI into a single package
+                                    priority: 20, // the weight needs to be larger than libs and app or it will be packaged into libs or app
+                                    test: /[\\/]node_modules[\\/]_?element-ui(.*)/ // in order to adapt to cnpm
+                                },
+                                commons: {
+                                    name: 'chunk-commons',
+                                    test: resolve('src/components'), // can customize your rules
+                                    minChunks: 3, //  minimum common number
+                                    priority: 5,
+                                    reuseExistingChunk: true
+                                }
+                            }
+                        })
+                        // https:// webpack.js.org/configuration/optimization/#optimizationruntimechunk
+                    config.optimization.runtimeChunk('single')
+                }
+            )
+    }
 }
-
-// preview.pro.antdv.com only do not use in your production;
-if (process.env.VUE_APP_PREVIEW === 'true') {
-  console.log('Running Preview Mode')
-  // add `ThemeColorReplacer` plugin to webpack plugins
-  vueConfig.configureWebpack.plugins.push(createThemeColorReplacerPlugin())
-}
-
-module.exports = vueConfig

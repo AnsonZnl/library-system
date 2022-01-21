@@ -1,65 +1,43 @@
-// with polyfills
-import 'core-js/stable'
-import 'regenerator-runtime/runtime'
-
 import Vue from 'vue'
-import App from './App.vue'
-import router from './router'
+
+import 'normalize.css/normalize.css' // A modern alternative to CSS resets
+
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
+import locale from 'element-ui/lib/locale/lang/en' // lang i18n
+
+import '@/styles/index.scss' // global css
+
+import App from './App'
 import store from './store'
-import i18n from './locales'
-import bootstrap from './core/bootstrap'
-import { ConfigProvider, Icon, Button, Tag, Menu, Dropdown, Avatar, Spin, Result, Form, Tabs, Input, Checkbox, Row, Col, Modal, Alert, Divider, notification, message } from 'ant-design-vue'
-import ProLayout, { PageHeaderWrapper } from '@ant-design-vue/pro-layout'
-import { PageLoading } from '@/components'
-import themeConfig from './config/theme.config.js'
+import router from './router'
 
-// 路由守卫
-import './router/router-guards'
-// 其他
-import './styles/global.less'
+import '@/icons' // icon
+import '@/permission' // permission control
 
-// Ant Design Vue
-Vue.use(ConfigProvider)
-Vue.use(Icon)
-Vue.use(Tag)
-Vue.use(Button)
-Vue.use(Menu)
-Vue.use(Dropdown)
-Vue.use(Avatar)
-Vue.use(Spin)
-Vue.use(Result)
-Vue.use(Form)
-Vue.use(Tabs)
-Vue.use(Input)
-Vue.use(Checkbox)
-Vue.use(Row)
-Vue.use(Col)
-Vue.use(Modal)
-Vue.use(Alert)
-Vue.use(Divider)
+/**
+ * If you don't want to use mock-server
+ * you want to use MockJs for mock api
+ * you can execute: mockXHR()
+ *
+ * Currently MockJs will be used in the production environment,
+ * please remove it before going online ! ! !
+ */
+// if (process.env.NODE_ENV === 'production') {
+//   const { mockXHR } = require('../mock')
+//   mockXHR()
+// }
 
-Vue.prototype.$confirm = Modal.confirm
-Vue.prototype.$message = message
-Vue.prototype.$notification = notification
-Vue.prototype.$info = Modal.info
-Vue.prototype.$success = Modal.success
-Vue.prototype.$error = Modal.error
-Vue.prototype.$warning = Modal.warning
-
-// ProLayout
-Vue.component('pro-layout', ProLayout)
-Vue.component('page-container', PageHeaderWrapper)
-window.umi_plugin_ant_themeVar = themeConfig.theme
-
-// Global imports
-Vue.use(PageLoading)
+// set ElementUI lang to EN
+Vue.use(ElementUI, { locale })
+    // 如果想要中文版 element-ui，按如下方式声明
+    // Vue.use(ElementUI)
 
 Vue.config.productionTip = false
 
 new Vue({
-  router,
-  store,
-  i18n,
-  created: bootstrap,
-  render: h => h(App),
-}).$mount('#app')
+    el: '#app',
+    router,
+    store,
+    render: h => h(App)
+})

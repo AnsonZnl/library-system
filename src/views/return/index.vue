@@ -57,7 +57,8 @@
           >
           
           <el-button type="text" size="small">编辑</el-button>
-          <el-button type="warning" size="small">删除</el-button>
+          
+          <el-button size="mini" type="danger">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

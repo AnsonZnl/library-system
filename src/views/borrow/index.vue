@@ -29,15 +29,23 @@
           v-model="searchData.author"
         />
       </el-form-item>
-      <br>
-      <el-form-item style="margin-left: 30px;">
+      <br />
+      <el-form-item style="margin-left: 30px">
         <el-button type="primary" @click="searchBook">搜索</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button type="" @click="searchData={name: '',isbn: '',bookClass:'', author: '',}">重置</el-button>
+        <el-button
+          type=""
+          @click="
+            searchData = { name: '', isbn: '', bookClass: '', author: '' }
+          "
+          >重置</el-button
+        >
       </el-form-item>
       <el-form-item>
-        <el-button type="success" @click="showAddBooks = true">添加书籍</el-button>
+        <el-button type="success" @click="showAddBooks = true"
+          >添加书籍</el-button
+        >
       </el-form-item>
     </el-form>
     <el-table :data="list" border style="width: 100%">
@@ -55,9 +63,9 @@
           <el-button @click="handleClick(scope.row)" type="text" size="small"
             >查看</el-button
           >
-          
+
           <el-button type="text" size="small">编辑</el-button>
-          <el-button type="warning" size="small">删除</el-button>
+          <el-button size="mini" type="danger">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -205,7 +213,7 @@
             page: 1,
             size: this.listPage.page_size,
           },
-          {...this.searchData}
+          { ...this.searchData }
         )
           .then((res) => {
             console.log(res);

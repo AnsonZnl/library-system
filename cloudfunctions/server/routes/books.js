@@ -23,6 +23,7 @@ router.post("/add", function(ctx, next) {
         stock,
     } = ctx.request.body;
     booksDB.add({
+        id: genBooksId(22),
         name,
         isbn,
         descript,

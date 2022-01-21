@@ -73,26 +73,74 @@ export const constantRoutes = [{
     },
 
     {
-        path: "/example",
+        path: "/borrow",
         component: Layout,
-        redirect: "/example/table",
-        name: "Example",
-        meta: { title: "借还管理", icon: "el-icon-tickets" },
+        redirect: "/borrow/borrow",
+        name: "Borrow",
+        meta: {
+            title: "借还管理",
+            icon: "el-icon-document",
+        },
         children: [{
-                path: "table",
-                name: "Table",
+                path: "borrow",
+                name: "Borrow",
                 component: () =>
-                    import ("@/views/table/index"),
-                meta: { title: "Table", icon: "table" },
+                    import ("@/views/borrow/index"),
+                meta: { title: "借书管理", icon: "" },
             },
             {
-                path: "tree",
-                name: "Tree",
+                path: "return",
+                name: "Return",
                 component: () =>
-                    import ("@/views/tree/index"),
-                meta: { title: "Tree", icon: "tree" },
+                    import ("@/views/return/index"),
+                meta: { title: "还书管理", icon: "" },
             },
         ],
+    },
+
+    {
+        path: "/users",
+        component: Layout,
+        children: [{
+            path: "users",
+            name: "Users",
+            component: () =>
+                import ("@/views/users/index"),
+            meta: {
+                title: "学生管理",
+                icon: "el-icon-user-solid",
+            },
+        }, ],
+    },
+
+    {
+        path: "/feedback",
+        component: Layout,
+        children: [{
+            path: "feedback",
+            name: "Feedback",
+            component: () =>
+                import ("@/views/feedback/index"),
+            meta: {
+                title: "留言管理",
+                icon: "el-icon-edit-outline",
+            },
+        }, ],
+    },
+
+    {
+        path: "/notice",
+        component: Layout,
+        children: [{
+            path: "notice",
+            name: "Notice",
+            component: () =>
+                import ("@/views/notice/index"),
+            meta: {
+                title: "公告管理",
+                icon: "el-icon-reading",
+            },
+        }, ],
     },
 
     // 404 page must be placed at the end !!!

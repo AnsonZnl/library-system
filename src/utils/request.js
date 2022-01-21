@@ -8,8 +8,8 @@ let prodUrl =
     "https://library-system-dev-3dm1b8e388467-1253918951.ap-shanghai.app.tcloudbase.com/api";
 // create an axios instance
 const service = axios.create({
-    baseURL: process.env.NODE_ENV === "production" ? prodUrl : devUrl,
-    // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+    // baseURL: process.env.NODE_ENV === "production" ? prodUrl : devUrl,
+    baseURL: prodUrl,
     // withCredentials: true, // send cookies when cross-domain requests
     timeout: 5000, // request timeout
 });

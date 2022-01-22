@@ -56,14 +56,16 @@
       <el-table-column prop="name" label="书籍名称"> </el-table-column>
       <el-table-column prop="bookClass" label="书籍类别"> </el-table-column>
       <el-table-column prop="isbn" label="书籍编码"> </el-table-column>
-      <el-table-column prop="author" label="作者" wdith="120"> </el-table-column>
+      <el-table-column prop="author" label="作者" wdith="120">
+      </el-table-column>
       <el-table-column prop="stock" label="库存"> </el-table-column>
       <el-table-column prop="shelfNumber" label="书架位置"> </el-table-column>
       <el-table-column prop="pressPrice" label="价钱"> </el-table-column>
-      <el-table-column prop="descript" label="描述" width="130"> </el-table-column>
+      <el-table-column prop="descript" label="描述" width="130">
+      </el-table-column>
       <el-table-column fixed="right" label="操作" width="150">
         <template slot-scope="scope">
-          <el-button @click="handleClick(scope.row)" type="text" size="small"
+          <el-button @click="bookDetail(scope.row)" type="text" size="small"
             >查看</el-button
           >
 
@@ -144,6 +146,14 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+    <el-dialog title="图书详情" :visible.sync="showBooksDetail">
+      <el-descriptions title="书籍信息" :column="3" :size="medium" border>
+        <el-descriptions-item label="书籍名称">{{detailData.name}}</el-descriptions-item>
+        <el-descriptions-item label="书籍编码">{{detailData.isbn}}</el-descriptions-item>
+        <el-descriptions-item label="书籍类型">{{detailData.bookClass}}</el-descriptions-item>
+        <el-descriptions-item label="书籍描述">{{detailData.descript}}</el-descriptions-item>
+      </el-descriptions>
+    </el-dialog>
   </div>
 </template>
 
@@ -161,6 +171,7 @@
       return {
         list: [],
         showAddBooks: false,
+        showBooksDetail: false,
         listPage: {
           // 考场分页
           total: 40,
@@ -186,92 +197,70 @@
           pressPrice: "",
           stock: "",
         },
+        detailData: {},
       };
     },
     created() {
       this.getBookList(1);
     },
     methods: {
-      onRemoveBook(row) {
+      async bookDetail(row) {
+        console.log(row._id);
+        let _id = row._id;
+        let res = await getList({ page: 1, size: 1 }, { _id });
+        console.log(res);
+        this.showBooksDetail = true;
+        this.detailData = res.data.list[0];
+      },
+      async onRemoveBook(row) {
         console.log(row);
         let id = row._id;
-        removeBook({ id })
-          .then((result) => {
-            this.$message({
-              message: "删除成功",
-              type: "success",
-            });
-            this.getBookList(1)
-          })
-          .catch((err) => {
-            this.$message({
-              message: "cancel!",
-              type: "warning",
-            });
-          });
+        await removeBook({ id });
+        this.$message({
+          message: "删除成功",
+          type: "success",
+        });
+        this.getBookList(1);
       },
-      getBookList(one) {
-        // let { province, city, examName } = this.examSearch;
-        // this.examTableLoading = true;
+      async getBookList(one) {
         if (one) {
           this.listPage.current = 1;
         }
-
-        getList(
+        let res = await getList(
           {
             page: one ? 1 : this.listPage.current,
             size: this.listPage.page_size,
           },
           { ...this.searchData }
-        )
-          .then((res) => {
-            console.log(res);
-            this.list = res.data.list;
-            this.listPage.total = res.data.total;
-            this.list.forEach((e) => {
-              let d = new Date(e.createTime);
-              e.createTime = d.toLocaleDateString() + d.toLocaleTimeString();
-            });
-          })
-          .catch((err) => {
-            console.error(err);
-          });
+        );
+        this.list = res.data.list;
+        this.listPage.total = res.data.total;
+        this.list.forEach((e) => {
+          let d = new Date(e.createTime);
+          e.createTime = d.toLocaleDateString() + d.toLocaleTimeString();
+        });
       },
-      searchBook() {
+      async searchBook() {
         console.log("searchData", this.searchData);
-        getList(
+        let res = await getList(
           {
             page: 1,
             size: this.listPage.page_size,
           },
           { ...this.searchData }
-        )
-          .then((res) => {
-            console.log(res);
-            this.list = res.data.list;
-            this.listPage.total = res.data.total;
-            this.list.forEach((e) => {
-              let d = new Date(e.createTime);
-              e.createTime = d.toLocaleDateString() + d.toLocaleTimeString();
-            });
-          })
-          .catch((err) => {
-            console.error(err);
-          });
+        );
+        console.log(res);
+        this.list = res.data.list;
+        this.listPage.total = res.data.total;
+        this.list.forEach((e) => {
+          let d = new Date(e.createTime);
+          e.createTime = d.toLocaleDateString() + d.toLocaleTimeString();
+        });
       },
-      onAddBook() {
-        addBook(this.addBook)
-          .then((res) => {
-            this.$message.success("添加成功！");
-            this.showAddBooks = false;
-            this.$refs.addForm.resetFields();
-          })
-          .catch((err) => {
-            this.$message({
-              message: "cancel!",
-              type: "warning",
-            });
-          });
+      async onAddBook() {
+        this.$message.success("添加成功！");
+        this.showAddBooks = false;
+        this.$refs.addForm.resetFields();
       },
       onCancel() {
         this.$message({

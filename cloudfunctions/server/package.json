@@ -1,6 +1,9 @@
 {
     "name": "server",
     "main": "tcbindex.js",
+    "scripts": {
+        "serve": "nodemon bin/www"
+    },
     "dependencies": {
         "@cloudbase/node-sdk": "1.1.1",
         "debug": "^4.1.1",
@@ -15,6 +18,7 @@
         "koa-router": "^7.4.0",
         "koa-static": "^5.0.0",
         "koa-views": "^6.2.0",
+        "nodemon": "^2.0.15",
         "pug": "^2.0.3",
         "serverless-http": "^2.3.2"
     }

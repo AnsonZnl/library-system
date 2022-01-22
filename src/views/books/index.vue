@@ -29,35 +29,48 @@
           v-model="searchData.author"
         />
       </el-form-item>
-      <br>
-      <el-form-item style="margin-left: 30px;">
+      <br />
+      <el-form-item style="margin-left: 30px">
         <el-button type="primary" @click="searchBook">搜索</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button type="" @click="searchData={name: '',isbn: '',bookClass:'', author: '',}">重置</el-button>
+        <el-button
+          type=""
+          @click="
+            searchData = { name: '', isbn: '', bookClass: '', author: '' }
+          "
+          >重置</el-button
+        >
       </el-form-item>
       <el-form-item>
-        <el-button type="success" @click="showAddBooks = true">添加书籍</el-button>
+        <el-button type="success" @click="showAddBooks = true"
+          >添加书籍</el-button
+        >
       </el-form-item>
     </el-form>
-    <el-table :data="list" border style="width: 100%">
-      <el-table-column fixed prop="createTime" label="入库日期" width="200">
+    <el-table :data="list" border style="width: 100%; height: 100%">
+      <el-table-column fixed="left" type="index" label="序号" width="50">
+      </el-table-column>
+      <el-table-column prop="createTime" label="入库日期" width="170">
       </el-table-column>
       <el-table-column prop="name" label="书籍名称"> </el-table-column>
+      <el-table-column prop="bookClass" label="书籍类别"> </el-table-column>
       <el-table-column prop="isbn" label="书籍编码"> </el-table-column>
-      <el-table-column prop="author" label="作者"> </el-table-column>
+      <el-table-column prop="author" label="作者" wdith="120"> </el-table-column>
       <el-table-column prop="stock" label="库存"> </el-table-column>
       <el-table-column prop="shelfNumber" label="书架位置"> </el-table-column>
       <el-table-column prop="pressPrice" label="价钱"> </el-table-column>
-      <el-table-column prop="descript" label="描述"> </el-table-column>
+      <el-table-column prop="descript" label="描述" width="130"> </el-table-column>
       <el-table-column fixed="right" label="操作" width="150">
         <template slot-scope="scope">
           <el-button @click="handleClick(scope.row)" type="text" size="small"
             >查看</el-button
           >
-          
+
           <el-button type="text" size="small">编辑</el-button>
-          <el-button type="warning" size="small">删除</el-button>
+          <el-button type="text" size="small" @click="onRemoveBook(scope.row)"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -66,61 +79,68 @@
     </div>
 
     <el-dialog title="添加图书" :visible.sync="showAddBooks">
-      <el-form ref="form" :model="form" label-width="120px">
-        <el-form-item label="Activity name">
-          <el-input v-model="form.name" />
+      <el-form ref="addForm" :model="addBook" label-width="120px">
+        <el-form-item label="书籍名称">
+          <el-input
+            size="medium"
+            placeholder="请输入书籍名称"
+            v-model="addBook.name"
+          />
         </el-form-item>
-        <el-form-item label="Activity zone">
-          <el-select
-            v-model="form.region"
-            placeholder="please select your zone"
-          >
-            <el-option label="Zone one" value="shanghai" />
-            <el-option label="Zone two" value="beijing" />
-          </el-select>
+        <el-form-item label="书籍ISBN">
+          <el-input
+            size="medium"
+            placeholder="请输入书籍ISBN"
+            v-model="addBook.isbn"
+          />
         </el-form-item>
-        <el-form-item label="Activity time">
-          <el-col :span="11">
-            <el-date-picker
-              v-model="form.date1"
-              type="date"
-              placeholder="Pick a date"
-              style="width: 100%"
-            />
-          </el-col>
-          <el-col :span="2" class="line">-</el-col>
-          <el-col :span="11">
-            <el-time-picker
-              v-model="form.date2"
-              type="fixed-time"
-              placeholder="Pick a time"
-              style="width: 100%"
-            />
-          </el-col>
+        <el-form-item label="书籍种类">
+          <el-input
+            size="medium"
+            placeholder="请输入书籍种类"
+            v-model="addBook.bookClass"
+          />
         </el-form-item>
-        <el-form-item label="Instant delivery">
-          <el-switch v-model="form.delivery" />
+        <el-form-item label="书籍作者">
+          <el-input
+            size="medium"
+            placeholder="请输入书籍作者"
+            v-model="addBook.author"
+          />
         </el-form-item>
-        <el-form-item label="Activity type">
-          <el-checkbox-group v-model="form.type">
-            <el-checkbox label="Online activities" name="type" />
-            <el-checkbox label="Promotion activities" name="type" />
-            <el-checkbox label="Offline activities" name="type" />
-            <el-checkbox label="Simple brand exposure" name="type" />
-          </el-checkbox-group>
+        <el-form-item label="书籍书架">
+          <el-input
+            size="medium"
+            placeholder="请输入书籍书架"
+            v-model="addBook.shelfNumber"
+          />
         </el-form-item>
-        <el-form-item label="Resources">
-          <el-radio-group v-model="form.resource">
-            <el-radio label="Sponsor" />
-            <el-radio label="Venue" />
-          </el-radio-group>
+        <el-form-item label="书籍价钱">
+          <el-input
+            size="medium"
+            placeholder="请输入书籍价钱"
+            v-model="addBook.pressPrice"
+          />
         </el-form-item>
-        <el-form-item label="Activity form">
-          <el-input v-model="form.desc" type="textarea" />
+        <el-form-item label="书籍库存">
+          <el-input
+            size="medium"
+            type="number"
+            placeholder="请输入书籍库存"
+            v-model="addBook.stock"
+          />
+        </el-form-item>
+        <el-form-item label="书籍描述">
+          <el-input
+            type="textarea"
+            size="medium"
+            placeholder="请输入书籍描述"
+            v-model="addBook.descript"
+          />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">Create</el-button>
-          <el-button @click="onCancel">Cancel</el-button>
+          <el-button type="primary" @click="onAddBook">添加</el-button>
+          <el-button @click="onCancel">取消</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -128,7 +148,7 @@
 </template>
 
 <script>
-  import { getList } from "@/api/books";
+  import { getList, addBook, removeBook } from "@/api/books";
 
   import Pagination from "../../components/Pagination";
 
@@ -145,9 +165,9 @@
           // 考场分页
           total: 40,
           current: 1,
-          page_size: 12,
+          page_size: 10,
           size: 0,
-          page_sizes: [15, 30, 45],
+          page_sizes: [10, 30, 50],
         },
         searchData: {
           name: "",
@@ -155,15 +175,16 @@
           bookClass: "",
           author: "",
         },
-        form: {
+
+        addBook: {
           name: "",
-          region: "",
-          date1: "",
-          date2: "",
-          delivery: false,
-          type: [],
-          resource: "",
-          desc: "",
+          isbn: "",
+          bookClass: "",
+          author: "",
+          descript: "",
+          shelfNumber: "",
+          pressPrice: "",
+          stock: "",
         },
       };
     },
@@ -171,6 +192,24 @@
       this.getBookList(1);
     },
     methods: {
+      onRemoveBook(row) {
+        console.log(row);
+        let id = row._id;
+        removeBook({ id })
+          .then((result) => {
+            this.$message({
+              message: "删除成功",
+              type: "success",
+            });
+            this.getBookList(1)
+          })
+          .catch((err) => {
+            this.$message({
+              message: "cancel!",
+              type: "warning",
+            });
+          });
+      },
       getBookList(one) {
         // let { province, city, examName } = this.examSearch;
         // this.examTableLoading = true;
@@ -183,7 +222,7 @@
             page: one ? 1 : this.listPage.current,
             size: this.listPage.page_size,
           },
-          this.searchData
+          { ...this.searchData }
         )
           .then((res) => {
             console.log(res);
@@ -205,7 +244,7 @@
             page: 1,
             size: this.listPage.page_size,
           },
-          {...this.searchData}
+          { ...this.searchData }
         )
           .then((res) => {
             console.log(res);
@@ -220,8 +259,19 @@
             console.error(err);
           });
       },
-      onSubmit() {
-        this.$message("submit!");
+      onAddBook() {
+        addBook(this.addBook)
+          .then((res) => {
+            this.$message.success("添加成功！");
+            this.showAddBooks = false;
+            this.$refs.addForm.resetFields();
+          })
+          .catch((err) => {
+            this.$message({
+              message: "cancel!",
+              type: "warning",
+            });
+          });
       },
       onCancel() {
         this.$message({

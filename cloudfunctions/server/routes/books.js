@@ -24,6 +24,7 @@ router.post("/add", function(ctx, next) {
     } = ctx.request.body;
     booksDB.add({
         id: genBooksId(22),
+        createTime: Date.now(),
         name,
         isbn,
         descript,
@@ -76,7 +77,10 @@ router.post("/query", async function(ctx, next) {
     size = Number(size);
     page = (Number(page) - 1) * size;
     console.log("query", body, page, size);
-
+    Object.keys(body).forEach((e) => {
+        if (body[e] == "") delete body[e];
+    });
+    console.log(body);
     let res = await booksDB.where(body).skip(page).limit(size).get();
     let count = await booksDB.where(body).count();
     ctx.body = {

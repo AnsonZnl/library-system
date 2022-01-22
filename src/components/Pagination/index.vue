@@ -1,6 +1,7 @@
 <template>
     <!-- 分页 -->
     <div class="pagination">
+    <div style="height:20px"></div>
         <el-pagination
             background
             @size-change="handleSizeChange"

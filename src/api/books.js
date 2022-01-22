@@ -1,10 +1,24 @@
 import request from "@/utils/request";
 
-export function getList(query, params) {
-    let { page = 1, size = 10 } = query
+export function getList(params, data) {
+    let { page = 1, size = 10 } = params;
     return request({
         url: `/books/query?page=${page}&size=${size}`,
         method: "post",
+        data,
+    });
+}
+export function addBook(data) {
+    return request({
+        url: `/books/add`,
+        method: "post",
+        data,
+    });
+}
+export function removeBook(params) {
+    return request({
+        url: `/books/remove`,
+        method: "get",
         params,
     });
 }

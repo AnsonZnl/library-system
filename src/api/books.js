@@ -22,3 +22,12 @@ export function removeBook(params) {
         params,
     });
 }
+export function getDouBookInfo(params) {
+    return request({
+        url: `/books/addDouBookInfo`,
+        method: "get",
+        params,
+    });
+}
+
+;

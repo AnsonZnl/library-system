@@ -58,10 +58,10 @@
       <el-table-column prop="isbn" label="书籍编码"> </el-table-column>
       <el-table-column prop="author" label="作者" wdith="120">
       </el-table-column>
-      <el-table-column prop="stock" label="库存"> </el-table-column>
-      <el-table-column prop="shelfNumber" label="书架位置"> </el-table-column>
-      <el-table-column prop="pressPrice" label="价钱"> </el-table-column>
-      <el-table-column prop="descript" label="描述" width="130">
+      <!-- <el-table-column prop="stock" label="库存"> </el-table-column> -->
+      <!-- <el-table-column prop="shelfNumber" label="书架位置"> </el-table-column> -->
+      <el-table-column prop="price" label="价钱"> </el-table-column>
+      <el-table-column prop="summary" label="描述" width="130">
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="150">
         <template slot-scope="scope">
@@ -82,18 +82,19 @@
 
     <el-dialog title="添加图书" :visible.sync="showAddBooks">
       <el-form ref="addForm" :model="addBook" label-width="120px">
-        <el-form-item label="书籍名称">
-          <el-input
-            size="medium"
-            placeholder="请输入书籍名称"
-            v-model="addBook.name"
-          />
-        </el-form-item>
         <el-form-item label="书籍ISBN">
           <el-input
             size="medium"
             placeholder="请输入书籍ISBN"
             v-model="addBook.isbn"
+          />
+          <el-button @click="onGetDouBookInfo">获取豆瓣信息</el-button>
+        </el-form-item>
+        <el-form-item label="书籍名称">
+          <el-input
+            size="medium"
+            placeholder="请输入书籍名称"
+            v-model="addBook.name"
           />
         </el-form-item>
         <el-form-item label="书籍种类">
@@ -110,26 +111,11 @@
             v-model="addBook.author"
           />
         </el-form-item>
-        <el-form-item label="书籍书架">
-          <el-input
-            size="medium"
-            placeholder="请输入书籍书架"
-            v-model="addBook.shelfNumber"
-          />
-        </el-form-item>
         <el-form-item label="书籍价钱">
           <el-input
             size="medium"
             placeholder="请输入书籍价钱"
-            v-model="addBook.pressPrice"
-          />
-        </el-form-item>
-        <el-form-item label="书籍库存">
-          <el-input
-            size="medium"
-            type="number"
-            placeholder="请输入书籍库存"
-            v-model="addBook.stock"
+            v-model="addBook.price"
           />
         </el-form-item>
         <el-form-item label="书籍描述">
@@ -137,7 +123,7 @@
             type="textarea"
             size="medium"
             placeholder="请输入书籍描述"
-            v-model="addBook.descript"
+            v-model="addBook.summary"
           />
         </el-form-item>
         <el-form-item>
@@ -147,18 +133,26 @@
       </el-form>
     </el-dialog>
     <el-dialog title="图书详情" :visible.sync="showBooksDetail">
-      <el-descriptions title="书籍信息" :column="3" :size="medium" border>
-        <el-descriptions-item label="书籍名称">{{detailData.name}}</el-descriptions-item>
-        <el-descriptions-item label="书籍编码">{{detailData.isbn}}</el-descriptions-item>
-        <el-descriptions-item label="书籍类型">{{detailData.bookClass}}</el-descriptions-item>
-        <el-descriptions-item label="书籍描述">{{detailData.descript}}</el-descriptions-item>
+      <el-descriptions title="书籍信息" :column="3" size="medium" border>
+        <el-descriptions-item label="书籍名称">{{
+          detailData.name
+        }}</el-descriptions-item>
+        <el-descriptions-item label="书籍编码">{{
+          detailData.isbn
+        }}</el-descriptions-item>
+        <el-descriptions-item label="书籍类型">{{
+          detailData.bookClass
+        }}</el-descriptions-item>
+        <el-descriptions-item label="书籍描述">{{
+          detailData.summary
+        }}</el-descriptions-item>
       </el-descriptions>
     </el-dialog>
   </div>
 </template>
 
 <script>
-  import { getList, addBook, removeBook } from "@/api/books";
+  import { getList, addBook, removeBook, getDouBookInfo } from "@/api/books";
 
   import Pagination from "../../components/Pagination";
 
@@ -192,10 +186,10 @@
           isbn: "",
           bookClass: "",
           author: "",
-          descript: "",
-          shelfNumber: "",
-          pressPrice: "",
-          stock: "",
+          summary: "",
+          // shelfNumber: "",
+          price: "",
+          // stock: "",
         },
         detailData: {},
       };
@@ -204,6 +198,16 @@
       this.getBookList(1);
     },
     methods: {
+      async onGetDouBookInfo() {
+        let isbn = this.addBook.isbn;
+        if (isbn) {
+          let res = await getDouBookInfo({ isbn });
+          console.log("res", res);
+          this.addBook = res.data
+        } else {
+          this.$message.error("输入isbn码");
+        }
+      },
       async bookDetail(row) {
         console.log(row._id);
         let _id = row._id;
@@ -238,6 +242,9 @@
         this.list.forEach((e) => {
           let d = new Date(e.createTime);
           e.createTime = d.toLocaleDateString() + d.toLocaleTimeString();
+          if (e.summary) {
+            e.summary = e.summary.slice(0, 10) + "....";
+          }
         });
       },
       async searchBook() {
@@ -255,12 +262,16 @@
         this.list.forEach((e) => {
           let d = new Date(e.createTime);
           e.createTime = d.toLocaleDateString() + d.toLocaleTimeString();
+          if (e.summary) {
+            e.summary = e.summary.slice(0, 10) + "....";
+          }
         });
       },
       async onAddBook() {
-        this.$message.success("添加成功！");
         this.showAddBooks = false;
         this.$refs.addForm.resetFields();
+        await addBook(this.addBook);
+        this.$message.success("添加成功！");
       },
       onCancel() {
         this.$message({

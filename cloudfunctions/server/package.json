@@ -6,7 +6,10 @@
     },
     "dependencies": {
         "@cloudbase/node-sdk": "1.1.1",
+        "axios": "^0.25.0",
+        "cheerio": "^1.0.0-rc.10",
         "debug": "^4.1.1",
+        "doubanbook": "^1.0.1",
         "express": "^4.17.1",
         "koa": "^2.7.0",
         "koa-bodyparser": "^4.2.1",

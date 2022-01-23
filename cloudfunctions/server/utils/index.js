@@ -1,3 +1,5 @@
+const { getBookInfo } = require('./getDouBookInfo')
+
 function genBooksId(num) {
     var returnStr = "",
         charStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -10,4 +12,5 @@ function genBooksId(num) {
 
 module.exports = {
     genBooksId,
+    getBookInfo,
 };

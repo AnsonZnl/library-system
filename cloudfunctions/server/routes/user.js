@@ -10,13 +10,20 @@ router.post("/login", function(ctx, next) {
     // ctx.body = ctx.request.body;
     let { password, username } = ctx.request.body;
     console.log({ password, username });
-    ctx.body = {
-        code: 20000,
-        message: "node error",
-        data: {
-            token: "admin-token",
-        },
-    };
+    if (username == 'admin' && password == '111111') {
+        ctx.body = {
+            code: 20000,
+            message: "success",
+            data: {
+                token: "admin-token",
+            },
+        };
+    } else {
+        ctx.body = {
+            code: 20001,
+            message: "账号密码错误"
+        };
+    }
     ctx.status = 200;
 });
 

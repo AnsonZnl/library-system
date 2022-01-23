@@ -12,15 +12,6 @@ router.get("/", function(ctx, next) {
 
 // 增
 router.post("/add", async function(ctx, next) {
-    // name: string;
-    // rate: any;
-    // images: any;
-    // doubanUrl: any;
-    // summary: any;
-    // tag: any[];
-    // author: any;
-    // publisher: any;
-    // price: any;
     ctx.body = ctx.request.body;
     let { name, isbn, summary, bookClass, shelfNumber, author, price, stock } =
     ctx.request.body;

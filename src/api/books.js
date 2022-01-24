@@ -15,6 +15,14 @@ export function addBook(data) {
         data,
     });
 }
+export function editBook(data) {
+    return request({
+        url: `/books/update`,
+        method: "post",
+        data,
+    });
+}
+
 export function removeBook(params) {
     return request({
         url: `/books/remove`,

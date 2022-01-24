@@ -93,6 +93,7 @@ router.post("/update", async function(ctx, next) {
     let body = ctx.request.body;
     let _id = body._id;
     delete body._id;
+    console.log("====", _id, body);
     let res = await booksDB.doc(_id).update(body);
     // console.log(_id, res, body);
     ctx.body = {

@@ -69,7 +69,9 @@
             >查看</el-button
           >
 
-          <el-button type="text" size="small">编辑</el-button>
+          <el-button type="text" size="small" @click="bookUpdate(scope.row)"
+            >编辑</el-button
+          >
           <el-button type="text" size="small" @click="onRemoveBook(scope.row)"
             >删除</el-button
           >
@@ -80,7 +82,10 @@
       <Pagination :page="listPage" @onPaging="getBookList" />
     </div>
 
-    <el-dialog title="添加图书" :visible.sync="showAddBooks">
+    <el-dialog
+      :title="isEdit ? '编辑图书' : '添加图书'"
+      :visible.sync="showAddBooks"
+    >
       <el-form ref="addForm" :model="addBook" label-width="120px">
         <el-form-item label="书籍ISBN">
           <el-input
@@ -88,7 +93,12 @@
             placeholder="请输入书籍ISBN"
             v-model="addBook.isbn"
           />
-          <el-button @click="onGetDouBookInfo">获取豆瓣信息</el-button>
+          <el-button
+            v-if="!isEdit"
+            :disabled="!addBook.isbn"
+            @click="onGetDouBookInfo"
+            >获取豆瓣信息</el-button
+          >
         </el-form-item>
         <el-form-item label="书籍名称">
           <el-input
@@ -127,8 +137,12 @@
           />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onAddBook">添加</el-button>
-          <el-button @click="onCancel">取消</el-button>
+          <el-button v-if="isEdit" type="primary" @click="onEditBook"
+            >确定</el-button
+          ><el-button v-else type="primary" @click="onAddBook"
+            >确定</el-button
+          >
+          <el-button @click="showAddBooks = false">取消</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -152,7 +166,13 @@
 </template>
 
 <script>
-  import { getList, addBook, removeBook, getDouBookInfo } from "@/api/books";
+  import {
+    getList,
+    addBook,
+    removeBook,
+    getDouBookInfo,
+    editBook,
+  } from "@/api/books";
 
   import Pagination from "../../components/Pagination";
 
@@ -165,6 +185,7 @@
       return {
         list: [],
         showAddBooks: false,
+        isEdit: false, // 是否编辑状态
         showBooksDetail: false,
         listPage: {
           // 考场分页
@@ -198,21 +219,28 @@
       this.getBookList(1);
     },
     methods: {
+      async bookUpdate(row) {
+        let res = await getList(
+          {
+            page: 1,
+            size: this.listPage.page_size,
+          },
+          { _id: row._id }
+        );
+        console.log(res);
+        this.showAddBooks = true;
+        this.addBook = res.data.list[0];
+        this.isEdit = true;
+      },
       async onGetDouBookInfo() {
         let isbn = this.addBook.isbn;
-        if (isbn) {
-          let res = await getDouBookInfo({ isbn });
-          console.log("res", res);
-          this.addBook = res.data
-        } else {
-          this.$message.error("输入isbn码");
-        }
+        let res = await getDouBookInfo({ isbn });
+        this.addBook = res.data;
       },
       async bookDetail(row) {
         console.log(row._id);
         let _id = row._id;
         let res = await getList({ page: 1, size: 1 }, { _id });
-        console.log(res);
         this.showBooksDetail = true;
         this.detailData = res.data.list[0];
       },
@@ -268,16 +296,18 @@
         });
       },
       async onAddBook() {
+        this.isEdit = false;
         this.showAddBooks = false;
         this.$refs.addForm.resetFields();
         await addBook(this.addBook);
         this.$message.success("添加成功！");
+        await this.getBookList(1);
       },
-      onCancel() {
-        this.$message({
-          message: "cancel!",
-          type: "warning",
-        });
+      async onEditBook() {
+        await editBook(this.addBook);
+        this.$refs.addForm.resetFields();
+        this.showAddBooks = false;
+        await this.getBookList();
       },
     },
   };

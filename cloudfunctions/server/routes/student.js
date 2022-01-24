@@ -9,40 +9,54 @@ router.prefix("/student");
 router.get("/", function(ctx, next) {
     ctx.body = "this is a student response!";
 });
-
+// 登陆
 router.post("/login", async function(ctx, next) {
-    // ctx.body = ctx.request.body;
-    let { password, username, account } = ctx.request.body;
-    console.log({ password, username, account });
-    await studentDB.add({
-        username,
-        password,
-        account,
-    });
-    ctx.body = {
-        code: 20000,
-        message: "node error",
-        data: {
-            token: "admin-token",
-        },
-    };
+    let { account, password } = ctx.request.body;
+    console.log({ account, password });
+    let res = await studentDB
+        .where({
+            account: account,
+        })
+        .get();
+
+    let data = res.data[0];
+    if (!data) {
+        ctx.body = {
+            code: 20001,
+            message: "账号不存在",
+        };
+    } else if (data.password == password) {
+        ctx.body = {
+            code: 20000,
+            message: "success",
+            data: {
+                token: "student-token",
+            },
+        };
+    } else {
+        ctx.body = {
+            code: 20001,
+            message: "账号密码错误",
+        };
+    }
     ctx.status = 200;
 });
-
+// 注册
 router.post("/register", async function(ctx, next) {
-    // ctx.body = ctx.request.body;
     let { password, username, account } = ctx.request.body;
-    console.log({ password, username, account });
+    console.log({ username, account, password });
     await studentDB.add({
         username,
-        password,
         account,
+        password,
+        createTime: Date.now(),
         info: {
-            borrwo: [], // 借书列表
-            historyBorrwo: [], // 历史借书列表
+            borrwo: [{
+                bookId: "",
+                startDate: "",
+                endDate: "",
+            }], // 借书列表
             borrwoCount: 5, // 可借书数量
-            historyBorrowNum: 0, // 历史借阅次数
-            historyBorrowNum: 0, // 历史借阅次数
         },
     });
     ctx.body = {
@@ -54,36 +68,43 @@ router.post("/register", async function(ctx, next) {
     };
     ctx.status = 200;
 });
-
-
-router.get("/info", function(ctx, next) {
-    // ctx.body = ctx.request.body;
-    let { password, username } = ctx.request.body;
-    console.log({ password, username });
+// 查看
+router.get("/info", async function(ctx, next) {
+    let { _id } = ctx.request.query;
+    let res = await studentDB.where({ _id }).get()
     ctx.body = {
         code: 20000,
-        data: {
-            introduction: "I am a super administrator",
-            avatar: "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif",
-            name: "Super Admin",
-            borrow: ['book id'],
-            state: {
-                count: 5, // 
-            },
-        },
+        data: res.data[0]
     };
     ctx.status = 200;
 });
+// 列表
+router.post("/list", async function(ctx, next) {
+    let { page, size } = ctx.request.query; // 页数
+    let body = ctx.request.body; // 查询条件
+    size = Number(size);
+    page = (Number(page) - 1) * size;
 
-router.post("/logout", function(ctx, next) {
-    // ctx.body = ctx.request.body;
-    let { password, username } = ctx.request.body;
-    console.log({ password, username });
+    Object.keys(body).forEach((e) => {
+        if (body[e] == "") delete body[e];
+    });
+
+    let res = await studentDB.where(body).skip(page).limit(size).get();
+    let count = await studentDB.where(body).count();
     ctx.body = {
         code: 20000,
-        data: "success",
+        data: { list: res.data, total: count.total },
     };
     ctx.status = 200;
 });
-
+// 删除
+router.get("/remove", async function(ctx, next) {
+    let { id } = ctx.request.query;
+    let res = await studentDB.doc(id).remove();
+    ctx.body = {
+        code: 20000,
+        data: res
+    };
+    ctx.status = 200;
+});
 module.exports = router;

@@ -40,7 +40,6 @@ router.post("/add", async function(ctx, next) {
     };
     ctx.status = 200;
 });
-
 // 添加豆瓣图书信息
 router.get("/addDouBookInfo", async(ctx, next) => {
     let { isbn } = ctx.request.query;
@@ -69,7 +68,6 @@ router.get("/addDouBookInfo", async(ctx, next) => {
     };
     ctx.status = 200;
 });
-
 // 删
 router.get("/remove", async function(ctx, next) {
     let { id } = ctx.request.query;
@@ -121,5 +119,32 @@ router.post("/query", async function(ctx, next) {
     };
     ctx.status = 200;
 });
-
+// 借书
+router.post("/borrow", async function(ctx, next) {
+    let body = ctx.request.body;
+    let _id = body._id;
+    delete body._id;
+    console.log("====", _id, body);
+    let res = await booksDB.doc(_id).update(body);
+    // console.log(_id, res, body);
+    ctx.body = {
+        code: 20000,
+        data: "success",
+    };
+    ctx.status = 200;
+});
+// 还书
+router.post("/rturn", async function(ctx, next) {
+    let body = ctx.request.body;
+    let _id = body._id;
+    delete body._id;
+    console.log("====", _id, body);
+    let res = await booksDB.doc(_id).update(body);
+    // console.log(_id, res, body);
+    ctx.body = {
+        code: 20000,
+        data: "success",
+    };
+    ctx.status = 200;
+});
 module.exports = router;

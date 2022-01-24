@@ -99,13 +99,13 @@ export const constantRoutes = [{
     },
 
     {
-        path: "/users",
+        path: "/students",
         component: Layout,
         children: [{
-            path: "users",
-            name: "Users",
+            path: "students",
+            name: "students",
             component: () =>
-                import ("@/views/users/index"),
+                import ("@/views/students/index"),
             meta: {
                 title: "学生管理",
                 icon: "el-icon-user-solid",

@@ -86,16 +86,16 @@
       :title="isEdit ? '编辑图书' : '添加图书'"
       :visible.sync="showAddBooks"
     >
-      <el-form ref="addForm" :model="addBook" label-width="120px">
+      <el-form ref="addForm" :model="bookForm" label-width="120px">
         <el-form-item label="书籍ISBN">
           <el-input
             size="medium"
             placeholder="请输入书籍ISBN"
-            v-model="addBook.isbn"
+            v-model="bookForm.isbn"
           />
           <el-button
             v-if="!isEdit"
-            :disabled="!addBook.isbn"
+            :disabled="!bookForm.isbn"
             @click="onGetDouBookInfo"
             >获取豆瓣信息</el-button
           >
@@ -104,28 +104,28 @@
           <el-input
             size="medium"
             placeholder="请输入书籍名称"
-            v-model="addBook.name"
+            v-model="bookForm.name"
           />
         </el-form-item>
         <el-form-item label="书籍种类">
           <el-input
             size="medium"
             placeholder="请输入书籍种类"
-            v-model="addBook.bookClass"
+            v-model="bookForm.bookClass"
           />
         </el-form-item>
         <el-form-item label="书籍作者">
           <el-input
             size="medium"
             placeholder="请输入书籍作者"
-            v-model="addBook.author"
+            v-model="bookForm.author"
           />
         </el-form-item>
         <el-form-item label="书籍价钱">
           <el-input
             size="medium"
             placeholder="请输入书籍价钱"
-            v-model="addBook.price"
+            v-model="bookForm.price"
           />
         </el-form-item>
         <el-form-item label="书籍描述">
@@ -133,7 +133,7 @@
             type="textarea"
             size="medium"
             placeholder="请输入书籍描述"
-            v-model="addBook.summary"
+            v-model="bookForm.summary"
           />
         </el-form-item>
         <el-form-item>
@@ -147,7 +147,7 @@
       </el-form>
     </el-dialog>
     <el-dialog title="图书详情" :visible.sync="showBooksDetail">
-      <el-descriptions title="书籍信息" :column="3" size="medium" border>
+      <el-descriptions :column="3" size="medium" border>
         <el-descriptions-item label="书籍名称">{{
           detailData.name
         }}</el-descriptions-item>
@@ -202,7 +202,7 @@
           author: "",
         },
 
-        addBook: {
+        bookForm: {
           name: "",
           isbn: "",
           bookClass: "",
@@ -229,13 +229,13 @@
         );
         console.log(res);
         this.showAddBooks = true;
-        this.addBook = res.data.list[0];
+        this.bookForm = res.data.list[0];
         this.isEdit = true;
       },
       async onGetDouBookInfo() {
-        let isbn = this.addBook.isbn;
+        let isbn = this.bookForm.isbn;
         let res = await getDouBookInfo({ isbn });
-        this.addBook = res.data;
+        this.bookForm = res.data;
       },
       async bookDetail(row) {
         console.log(row._id);
@@ -299,14 +299,15 @@
         this.isEdit = false;
         this.showAddBooks = false;
         this.$refs.addForm.resetFields();
-        await addBook(this.addBook);
+        await addBook(this.bookForm);
         this.$message.success("添加成功！");
         await this.getBookList(1);
       },
       async onEditBook() {
-        await editBook(this.addBook);
+        await editBook(this.bookForm);
         this.$refs.addForm.resetFields();
         this.showAddBooks = false;
+
         await this.getBookList();
       },
     },

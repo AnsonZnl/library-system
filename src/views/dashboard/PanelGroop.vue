@@ -8,9 +8,9 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            正常考试数量
+            书籍数量
           </div>
-          <count-to :start-val="0" :end-val="vd.count || 0" suffix=" 次" :duration="2600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="vd.count || 0" suffix=" 本" :duration="2600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -22,9 +22,9 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            考试使用时间
+            学生数量
           </div>
-          <count-to :start-val="0" :end-val="vd.useTime || 0" suffix=" 分钟" :duration="3000" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="vd.useTime || 0" suffix=" 名" :duration="3000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -36,7 +36,7 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            异常考试数量
+            借阅次数
           </div>
           <count-to :start-val="0" :end-val="vd.errCount || 0" suffix=" 次" :duration="3200" class="card-panel-num" />
         </div>
@@ -50,9 +50,9 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            今日设备使用
+            留言数量
           </div>
-          <count-to :start-val="0" :end-val="vd.useDevice || 0" suffix=" 台" :duration="3600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="vd.useDevice || 0" suffix=" 个" :duration="3600" class="card-panel-num" />
         </div>
       </div>
     </el-col>

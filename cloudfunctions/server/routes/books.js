@@ -13,12 +13,30 @@ router.get("/", function(ctx, next) {
 // 增
 router.post("/add", async function(ctx, next) {
     ctx.body = ctx.request.body;
-    let { name, isbn, summary, bookClass, shelfNumber, author, price, stock } =
-    ctx.request.body;
+    let {
+        name,
+        isbn,
+        summary,
+        bookClass,
+        images,
+        rate,
+        tag,
+        shelfNumber,
+        author,
+        price,
+        doubanUrl,
+        publisher,
+        stock,
+    } = ctx.request.body;
     await booksDB.add({
         id: genBooksId(22),
         createTime: Date.now(),
+        images,
+        publisher,
+        doubanUrl,
         name,
+        rate,
+        tag,
         isbn,
         summary,
         bookClass,

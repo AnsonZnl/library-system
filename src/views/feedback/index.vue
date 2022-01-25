@@ -1,134 +1,129 @@
 <template>
   <div class="app-container">
     <el-form ref="form1" :inline="true" :model="searchData" label-width="100px">
-      <el-form-item label="书籍名称">
+      <el-form-item label="学生姓名">
         <el-input
           size="medium"
-          placeholder="请输入书籍名称"
-          v-model="searchData.name"
+          placeholder="请输入学生姓名"
+          v-model="searchData.username"
         />
       </el-form-item>
-      <el-form-item label="书籍ISBN">
+      <el-form-item label="学生账号">
         <el-input
           size="medium"
-          placeholder="请输入书籍ISBN"
-          v-model="searchData.isbn"
+          placeholder="请输入学生账号"
+          v-model="searchData.account"
         />
       </el-form-item>
-      <el-form-item label="书籍种类">
-        <el-input
-          size="medium"
-          placeholder="请输入书籍种类"
-          v-model="searchData.bookClass"
-        />
-      </el-form-item>
-      <el-form-item label="书籍作者">
-        <el-input
-          size="medium"
-          placeholder="请输入书籍作者"
-          v-model="searchData.author"
-        />
-      </el-form-item>
-      <br>
-      <el-form-item style="margin-left: 30px;">
-        <el-button type="primary" @click="searchBook">搜索</el-button>
+
+      <el-form-item style="margin-left: 30px">
+        <el-button type="primary" @click="searchStudent">搜索</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button type="" @click="searchData={name: '',isbn: '',bookClass:'', author: '',}">重置</el-button>
+        <el-button type="" @click="searchData = { username: '', account: '' }"
+          >重置</el-button
+        >
       </el-form-item>
       <el-form-item>
-        <el-button type="success" @click="showAddBooks = true">添加书籍</el-button>
+        <el-button type="success" @click="showAddStudent = true"
+          >添加学生</el-button
+        >
       </el-form-item>
     </el-form>
-    <el-table :data="list" border style="width: 100%">
-      <el-table-column fixed prop="createTime" label="入库日期" width="200">
+    <el-table :data="list" border style="width: 100%; height: 100%">
+      <el-table-column fixed="left" type="index" label="序号" width="50">
       </el-table-column>
-      <el-table-column prop="name" label="书籍名称"> </el-table-column>
-      <el-table-column prop="isbn" label="书籍编码"> </el-table-column>
-      <el-table-column prop="author" label="作者"> </el-table-column>
-      <el-table-column prop="stock" label="库存"> </el-table-column>
-      <el-table-column prop="shelfNumber" label="书架位置"> </el-table-column>
-      <el-table-column prop="pressPrice" label="价钱"> </el-table-column>
-      <el-table-column prop="descript" label="描述"> </el-table-column>
+      <el-table-column prop="createTime" label="注册日期" width="170">
+      </el-table-column>
+      <el-table-column prop="username" label="学生名称"> </el-table-column>
+      <el-table-column prop="account" label="学生账号"> </el-table-column>
+      <el-table-column prop="info.borrwoCount" label="可借数量">
+      </el-table-column>
+
       <el-table-column fixed="right" label="操作" width="150">
         <template slot-scope="scope">
-          <el-button @click="handleClick(scope.row)" type="text" size="small"
+          <el-button @click="studentDetail(scope.row)" type="text" size="small"
             >查看</el-button
           >
-          
-          <el-button type="text" size="small">编辑</el-button>
-          <el-button type="warning" size="small">删除</el-button>
+          <el-button
+            type="text"
+            size="small"
+            @click="onRemoveStudent(scope.row)"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
     <div class="block">
-      <Pagination :page="listPage" @onPaging="getBookList" />
+      <Pagination :page="listPage" @onPaging="getStudentList" />
     </div>
 
-    <el-dialog title="添加图书" :visible.sync="showAddBooks">
-      <el-form ref="form" :model="form" label-width="120px">
-        <el-form-item label="Activity name">
-          <el-input v-model="form.name" />
+    <el-dialog title="添加学生" :visible.sync="showAddStudent">
+      <el-form ref="addForm" :model="studentForm" label-width="120px">
+        <el-form-item label="学生姓名">
+          <el-input
+            size="medium"
+            placeholder="请输入学生姓名"
+            v-model="studentForm.username"
+          />
         </el-form-item>
-        <el-form-item label="Activity zone">
-          <el-select
-            v-model="form.region"
-            placeholder="please select your zone"
-          >
-            <el-option label="Zone one" value="shanghai" />
-            <el-option label="Zone two" value="beijing" />
-          </el-select>
+        <el-form-item label="学生账号">
+          <el-input
+            size="medium"
+            placeholder="请输入学生账号"
+            v-model="studentForm.account"
+          />
         </el-form-item>
-        <el-form-item label="Activity time">
-          <el-col :span="11">
-            <el-date-picker
-              v-model="form.date1"
-              type="date"
-              placeholder="Pick a date"
-              style="width: 100%"
-            />
-          </el-col>
-          <el-col :span="2" class="line">-</el-col>
-          <el-col :span="11">
-            <el-time-picker
-              v-model="form.date2"
-              type="fixed-time"
-              placeholder="Pick a time"
-              style="width: 100%"
-            />
-          </el-col>
-        </el-form-item>
-        <el-form-item label="Instant delivery">
-          <el-switch v-model="form.delivery" />
-        </el-form-item>
-        <el-form-item label="Activity type">
-          <el-checkbox-group v-model="form.type">
-            <el-checkbox label="Online activities" name="type" />
-            <el-checkbox label="Promotion activities" name="type" />
-            <el-checkbox label="Offline activities" name="type" />
-            <el-checkbox label="Simple brand exposure" name="type" />
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="Resources">
-          <el-radio-group v-model="form.resource">
-            <el-radio label="Sponsor" />
-            <el-radio label="Venue" />
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="Activity form">
-          <el-input v-model="form.desc" type="textarea" />
+        <el-form-item label="学生密码">
+          <el-input
+            size="medium"
+            placeholder="请输入学生密码"
+            v-model="studentForm.password"
+          />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">Create</el-button>
-          <el-button @click="onCancel">Cancel</el-button>
+          <el-button type="primary" @click="onAddStudent">确定</el-button>
+          <el-button @click="showAddStudent = false">取消</el-button>
         </el-form-item>
       </el-form>
+    </el-dialog>
+    <el-dialog title="学生详情" :visible.sync="showBooksDetail">
+      <el-descriptions :column="4" size="medium" border>
+        <el-descriptions-item label="学生名称">{{
+          detailData.username
+        }}</el-descriptions-item>
+        <el-descriptions-item label="学生账号">{{
+          detailData.account
+        }}</el-descriptions-item>
+        <el-descriptions-item label="学生密码">{{
+          detailData.password
+        }}</el-descriptions-item>
+        <el-descriptions-item label="可借数量">{{
+          detailData.info.borrwoCount
+        }}</el-descriptions-item>
+        <el-table
+          :data="detailData.info.borrwo"
+          border
+          style="width: 100%; height: 100%"
+        >
+          <el-table-column fixed="left" type="index" label="序号" width="50">
+          </el-table-column>
+          <el-table-column prop="bookId" label="书籍ID"></el-table-column>
+          <el-table-column prop="startDate" label="开始日期"></el-table-column>
+          <el-table-column prop="endDate" label="还书日期"></el-table-column>
+        </el-table>
+      </el-descriptions>
     </el-dialog>
   </div>
 </template>
 
 <script>
-  import { getList } from "@/api/books";
+  import {
+    getList,
+    addStudent,
+    studentInfo,
+    removeStudent,
+  } from "@/api/student";
 
   import Pagination from "../../components/Pagination";
 
@@ -140,94 +135,105 @@
     data() {
       return {
         list: [],
-        showAddBooks: false,
+        showAddStudent: false,
+        isEdit: false, // 是否编辑状态
+        showBooksDetail: false,
         listPage: {
-          // 考场分页
           total: 40,
           current: 1,
-          page_size: 12,
+          page_size: 10,
           size: 0,
-          page_sizes: [15, 30, 45],
+          page_sizes: [10, 30, 50],
         },
         searchData: {
-          name: "",
-          isbn: "",
-          bookClass: "",
-          author: "",
+          username: "",
+          account: "",
         },
-        form: {
-          name: "",
-          region: "",
-          date1: "",
-          date2: "",
-          delivery: false,
-          type: [],
-          resource: "",
-          desc: "",
+        studentForm: {
+          username: "",
+          account: "",
+          password: "",
+        },
+        detailData: {
+          info: {
+            borrwo: [{
+                bookId: "",
+                startDate: "",
+                endDate: "",
+            }], // 借书列表
+            borrwoCount: 5, // 可借书数量
+        },
         },
       };
     },
     created() {
-      this.getBookList(1);
+      this.getStudentList(1);
     },
     methods: {
-      getBookList(one) {
-        // let { province, city, examName } = this.examSearch;
-        // this.examTableLoading = true;
+      async studentDetail(row) {
+        console.log(row._id);
+        let _id = row._id;
+        let res = await studentInfo({ _id });
+        this.showBooksDetail = true;
+        this.detailData = res.data;
+      },
+      async onRemoveStudent(row) {
+        console.log(row);
+        let id = row._id;
+        await removeStudent({ id });
+        this.$message({
+          message: "删除成功",
+          type: "success",
+        });
+        this.getStudentList(1);
+      },
+      async getStudentList(one) {
         if (one) {
           this.listPage.current = 1;
         }
-
-        getList(
+        let res = await getList(
           {
             page: one ? 1 : this.listPage.current,
             size: this.listPage.page_size,
           },
-          this.searchData
-        )
-          .then((res) => {
-            console.log(res);
-            this.list = res.data.list;
-            this.listPage.total = res.data.total;
-            this.list.forEach((e) => {
-              let d = new Date(e.createTime);
-              e.createTime = d.toLocaleDateString() + d.toLocaleTimeString();
-            });
-          })
-          .catch((err) => {
-            console.error(err);
-          });
+          { ...this.searchData }
+        );
+        this.list = res.data.list;
+        this.listPage.total = res.data.total;
+        this.list.forEach((e) => {
+          let d = new Date(e.createTime);
+          e.createTime = d.toLocaleDateString() + d.toLocaleTimeString();
+          if (e.summary) {
+            e.summary = e.summary.slice(0, 10) + "....";
+          }
+        });
       },
-      searchBook() {
+      async searchStudent() {
         console.log("searchData", this.searchData);
-        getList(
+        let res = await getList(
           {
             page: 1,
             size: this.listPage.page_size,
           },
-          {...this.searchData}
-        )
-          .then((res) => {
-            console.log(res);
-            this.list = res.data.list;
-            this.listPage.total = res.data.total;
-            this.list.forEach((e) => {
-              let d = new Date(e.createTime);
-              e.createTime = d.toLocaleDateString() + d.toLocaleTimeString();
-            });
-          })
-          .catch((err) => {
-            console.error(err);
-          });
-      },
-      onSubmit() {
-        this.$message("submit!");
-      },
-      onCancel() {
-        this.$message({
-          message: "cancel!",
-          type: "warning",
+          { ...this.searchData }
+        );
+        console.log(res);
+        this.list = res.data.list;
+        this.listPage.total = res.data.total;
+        this.list.forEach((e) => {
+          let d = new Date(e.createTime);
+          e.createTime = d.toLocaleDateString() + d.toLocaleTimeString();
+          if (e.summary) {
+            e.summary = e.summary.slice(0, 10) + "....";
+          }
         });
+      },
+      async onAddStudent() {
+        this.showAddStudent = false;
+        this.$refs.addForm.resetFields();
+        await addStudent(this.studentForm);
+        this.$message.success("添加成功！");
+        await this.getStudentList(1);
       },
     },
   };

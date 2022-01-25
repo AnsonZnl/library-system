@@ -31,6 +31,7 @@ router.post("/login", async function(ctx, next) {
             message: "success",
             data: {
                 token: "student-token",
+                info: data,
             },
         };
     } else {

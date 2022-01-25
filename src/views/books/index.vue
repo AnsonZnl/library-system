@@ -147,6 +147,7 @@
       </el-form>
     </el-dialog>
     <el-dialog title="图书详情" :visible.sync="showBooksDetail">
+      <img :src="detailData.images" style="width:300px;height:300px;" alt="">
       <el-descriptions :column="3" size="medium" border>
         <el-descriptions-item label="书籍名称">{{
           detailData.name

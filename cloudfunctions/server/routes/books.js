@@ -3,6 +3,7 @@ const tcb = require("./../config/tcb");
 const { genBooksId, getBookInfo } = require("./../utils");
 const db = tcb.database();
 const booksDB = db.collection("booksList");
+const studentDB = db.collection("students");
 const _ = db.command;
 
 router.prefix("/books");
@@ -44,14 +45,28 @@ router.post("/add", async function(ctx, next) {
         author,
         price,
         stock,
+        // 当前书籍的状态
         status: {
-            code: 0, // 0=空闲，1=借阅
+            statusCode: 1, // 1=空闲，2=借阅申请中，3=借阅中，4=还书申请中
             userId: "", // 借阅的用户ID。
             startDate: "",
             endDate: "",
         },
     });
 
+    /*
+                                                    1=书籍空闲
+                                                    学生申请借书（学生ID，书籍ID，借书日期，还书日期）
+                                                    2=借阅申请
+                                                    管理员审批后
+                                                    3=借阅中
+                                                    学员申请还书
+                                                    4=还书申请中
+                                                    管理员审批后
+                                                    1=书籍空闲
+                                                    
+
+                                            */
     ctx.body = {
         code: 20000,
         data: "success",
@@ -140,14 +155,37 @@ router.post("/query", async function(ctx, next) {
 // 借书
 router.post("/borrow", async function(ctx, next) {
     let body = ctx.request.body;
-    let _id = body._id;
-    delete body._id;
-    console.log("====", _id, body);
-    let res = await booksDB.doc(_id).update(body);
-    // console.log(_id, res, body);
+    // console.log();
+    let { userid, bookid, startDate, endDate } = body;
+
+    console.log("====", body);
+    let book = await studentDB.where({ _id: userid }).get();
+    let user = await booksDB.where({ _id: bookid }).get();
+    console.log(body);
+    let bookData = book.data[0];
+    let userData = user.data[0];
+
+    // 改用户状态
+    let setData = {
+        code: 2, // 申请中
+        userid,
+        bookid,
+        startDate,
+        endDate,
+    };
+    await studentDB.doc(userid).update({
+        info: {
+            borrwo: _.push(setData),
+        },
+    });
+    // 改书籍状态
+
     ctx.body = {
         code: 20000,
-        data: "success",
+        data: {
+            bookData,
+            userData,
+        },
     };
     ctx.status = 200;
 });

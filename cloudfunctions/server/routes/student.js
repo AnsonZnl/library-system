@@ -52,11 +52,13 @@ router.post("/register", async function(ctx, next) {
         password,
         createTime: Date.now(),
         info: {
+            // 当前用户的书籍借阅状态
             borrwo: [{
+                statusCode: 1, // 1=空闲，2=借阅申请中，3=借阅中，4=还书申请中
                 bookId: "",
                 startDate: "",
                 endDate: "",
-            }], // 借书列表
+            }, ], // 借书列表
             borrwoCount: 5, // 可借书数量
         },
     });

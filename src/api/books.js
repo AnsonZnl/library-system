@@ -37,5 +37,10 @@ export function getDouBookInfo(params) {
         params,
     });
 }
-
-;
+export function getBorrwoList(params) {
+    return request({
+        url: `/books/borrowList`,
+        method: "get",
+        params,
+    });
+}

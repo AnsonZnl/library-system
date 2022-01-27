@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form ref="form1" :inline="true" :model="searchData" label-width="100px">
+    <!-- <el-form ref="form1" :inline="true" :model="searchData" label-width="100px">
       <el-form-item label="书籍名称">
         <el-input
           size="medium"
@@ -47,25 +47,27 @@
           >添加书籍</el-button
         >
       </el-form-item>
-    </el-form>
+    </el-form> -->
+    <h2>借书申请列表</h2>
     <el-table :data="list" border style="width: 100%">
-      <el-table-column fixed prop="createTime" label="入库日期" width="200">
+      <el-table-column fixed prop="status.username" label="学生姓名" width="">
       </el-table-column>
+      <el-table-column prop="status.account" label="学生账号"> </el-table-column>
       <el-table-column prop="name" label="书籍名称"> </el-table-column>
-      <el-table-column prop="isbn" label="书籍编码"> </el-table-column>
       <el-table-column prop="author" label="作者"> </el-table-column>
       <el-table-column prop="stock" label="库存"> </el-table-column>
-      <el-table-column prop="shelfNumber" label="书架位置"> </el-table-column>
-      <el-table-column prop="pressPrice" label="价钱"> </el-table-column>
-      <el-table-column prop="descript" label="描述"> </el-table-column>
+      <el-table-column prop="status.startDate" label="借书日期" width="100"> </el-table-column>
+      <el-table-column prop="status.endDate" label="还书日期" width="100"> </el-table-column>
+      <el-table-column prop="status.borrwoDay" label="借书天数" width="100"> </el-table-column>
+      
       <el-table-column fixed="right" label="操作" width="150">
         <template slot-scope="scope">
-          <el-button @click="handleClick(scope.row)" type="text" size="small"
+          <!-- <el-button @click="handleClick(scope.row)" type="text" size="small"
             >查看</el-button
-          >
+          > -->
 
-          <el-button type="text" size="small">编辑</el-button>
-          <el-button size="mini" type="danger">删除</el-button>
+          <el-button type="success" size="mini" @click="passRequest(scope.row)">通过</el-button>
+          <el-button size="mini" type="danger">拒绝</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -136,7 +138,7 @@
 </template>
 
 <script>
-  import { getList } from "@/api/books";
+  import { getBorrwoList } from "@/api/books";
 
   import Pagination from "../../components/Pagination";
 
@@ -186,12 +188,11 @@
           this.listPage.current = 1;
         }
 
-        getList(
+        getBorrwoList(
           {
             page: one ? 1 : this.listPage.current,
             size: this.listPage.page_size,
-          },
-          this.searchData
+          }
         )
           .then((res) => {
             console.log(res);

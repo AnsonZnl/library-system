@@ -1,10 +1,13 @@
 const router = require("koa-router")();
+
+const { end } = require("cheerio/lib/api/traversing");
 const tcb = require("./../config/tcb");
 const { genBooksId, getBookInfo } = require("./../utils");
 const db = tcb.database();
 const booksDB = db.collection("booksList");
 const studentDB = db.collection("students");
 const _ = db.command;
+const $ = db.command.aggregate;
 
 router.prefix("/books");
 router.get("/", function(ctx, next) {
@@ -55,18 +58,18 @@ router.post("/add", async function(ctx, next) {
     });
 
     /*
-                                                    1=书籍空闲
-                                                    学生申请借书（学生ID，书籍ID，借书日期，还书日期）
-                                                    2=借阅申请
-                                                    管理员审批后
-                                                    3=借阅中
-                                                    学员申请还书
-                                                    4=还书申请中
-                                                    管理员审批后
-                                                    1=书籍空闲
-                                                    
+                                                                                                                                                                              1=书籍空闲
+                                                                                                                                                                              学生申请借书（学生ID，书籍ID，借书日期，还书日期）
+                                                                                                                                                                              2=借阅申请
+                                                                                                                                                                              管理员审批后
+                                                                                                                                                                              3=借阅中
+                                                                                                                                                                              学员申请还书
+                                                                                                                                                                              4=还书申请中
+                                                                                                                                                                              管理员审批后
+                                                                                                                                                                              1=书籍空闲
+                                                                                                                                                                              
 
-                                            */
+                                                                                                                                                                      */
     ctx.body = {
         code: 20000,
         data: "success",
@@ -156,7 +159,12 @@ router.post("/query", async function(ctx, next) {
 router.post("/borrow", async function(ctx, next) {
     let body = ctx.request.body;
     // console.log();
-    let { userid, bookid, startDate, endDate } = body;
+    let { userid, bookid, startDate, endDate, username, bookname, account } =
+    body;
+
+    let end = +new Date(endDate);
+    let start = +new Date(startDate);
+    let borrowDay = (end - start) / 1000 / 60 / 60 / 24;
 
     console.log("====", body);
     let book = await studentDB.where({ _id: userid }).get();
@@ -170,13 +178,20 @@ router.post("/borrow", async function(ctx, next) {
         code: 2, // 申请中
         userid,
         bookid,
+        borrowDay,
+        account,
         startDate,
         endDate,
+        username,
+        bookname,
     };
     await studentDB.doc(userid).update({
         info: {
             borrwo: _.push(setData),
         },
+    });
+    await booksDB.doc(bookid).update({
+        status: _.set(setData),
     });
     // 改书籍状态
 
@@ -186,6 +201,63 @@ router.post("/borrow", async function(ctx, next) {
             bookData,
             userData,
         },
+    };
+    ctx.status = 200;
+});
+// 借书列表
+
+router.get("/borrowList", async function(ctx, next) {
+    let { page, size } = ctx.request.query; // 页数
+    let body = ctx.request.body; // 查询条件
+    size = Number(size);
+    page = (Number(page) - 1) * size;
+    // console.log("====", query);
+    // let book = await studentDB.where({ _id: userid }).get();
+    // 申请中的书
+    let book = await booksDB
+        .where({
+            status: {
+                code: 2,
+            },
+        })
+        .skip(page)
+        .limit(size)
+        .get();
+
+    let count = await booksDB
+        .where({
+            status: {
+                code: 2,
+            },
+        })
+        .count();
+    // let user = await studentDB
+    //     .aggregate()
+    //     .project({
+    //         username: 1,
+    //         "info.borrwoCount": 1,
+    //         "info.borrwo": $.filter({
+    //             input: "$info.borrwo",
+    //             as: "item",
+    //             cond: $.gte(["$$item.code", 2]),
+    //         }),
+    //     })
+    //     .end();
+    // let arr = [...user.data];
+    // let userdata = [];
+    // for (let i = 0; i < arr.length; i++) {
+    //     const e = arr[i];
+    //     if (e.info.borrwo.length == 0) {
+    //         e.isEmpty = true;
+    //     } else {
+    //         userdata.push(e);
+    //         e.isEmpty = false;
+    //     }
+    // }
+
+    ctx.body = {
+        code: 20000,
+        data: { list: book.data, total: count.total },
     };
     ctx.status = 200;
 });

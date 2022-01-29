@@ -52,22 +52,30 @@
     <el-table :data="list" border style="width: 100%">
       <el-table-column fixed prop="status.username" label="学生姓名" width="">
       </el-table-column>
-      <el-table-column prop="status.account" label="学生账号"> </el-table-column>
+      <el-table-column prop="status.account" label="学生账号">
+      </el-table-column>
       <el-table-column prop="name" label="书籍名称"> </el-table-column>
       <el-table-column prop="author" label="作者"> </el-table-column>
       <el-table-column prop="stock" label="库存"> </el-table-column>
-      <el-table-column prop="status.startDate" label="借书日期" width="100"> </el-table-column>
-      <el-table-column prop="status.endDate" label="还书日期" width="100"> </el-table-column>
-      <el-table-column prop="status.borrwoDay" label="借书天数" width="100"> </el-table-column>
-      
+      <el-table-column prop="status.startDate" label="借书日期" width="100">
+      </el-table-column>
+      <el-table-column prop="status.endDate" label="还书日期" width="100">
+      </el-table-column>
+      <el-table-column prop="status.borrowDay" label="借书天数" width="100">
+      </el-table-column>
+
       <el-table-column fixed="right" label="操作" width="150">
         <template slot-scope="scope">
           <!-- <el-button @click="handleClick(scope.row)" type="text" size="small"
             >查看</el-button
           > -->
 
-          <el-button type="success" size="mini" @click="passRequest(scope.row)">通过</el-button>
-          <el-button size="mini" type="danger">拒绝</el-button>
+          <el-button type="success" size="mini" @click="passRequest(scope.row)"
+            >通过</el-button
+          >
+          <el-button size="mini" type="danger" @click="rejectRequest(scope.row)"
+            >拒绝</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -75,7 +83,7 @@
       <Pagination :page="listPage" @onPaging="getBookList" />
     </div>
 
-    <el-dialog title="添加图书" :visible.sync="showAddBooks">
+    <!-- <el-dialog title="添加图书" :visible.sync="showAddBooks">
       <el-form ref="form" :model="form" label-width="120px">
         <el-form-item label="Activity name">
           <el-input v-model="form.name" />
@@ -133,12 +141,12 @@
           <el-button @click="onCancel">Cancel</el-button>
         </el-form-item>
       </el-form>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
 <script>
-  import { getBorrwoList } from "@/api/books";
+  import { getBorrwoList, isPassBorrow } from "@/api/books";
 
   import Pagination from "../../components/Pagination";
 
@@ -181,6 +189,30 @@
       this.getBookList(1);
     },
     methods: {
+      passRequest: async function (row) {
+        console.log(row);
+        let data = row.status;
+        // debugger
+        let res = await isPassBorrow({
+          isPass: 3,
+          userid: data.userid,
+          bookid: data.bookid,
+          id: data.borrwoId,
+        });
+        console.log(res);
+        this.getBookList(1);
+      },
+      rejectRequest: async function (row) {
+        let data = row.status;
+        let res = await isPassBorrow({
+          isPass: 1,
+          userid: data.userid,
+          bookid: data.bookid,
+          id: data.borrwoId,
+        });
+        console.log(res);
+        this.getBookList(1);
+      },
       getBookList(one) {
         // let { province, city, examName } = this.examSearch;
         // this.examTableLoading = true;
@@ -188,12 +220,10 @@
           this.listPage.current = 1;
         }
 
-        getBorrwoList(
-          {
-            page: one ? 1 : this.listPage.current,
-            size: this.listPage.page_size,
-          }
-        )
+        getBorrwoList({
+          page: one ? 1 : this.listPage.current,
+          size: this.listPage.page_size,
+        })
           .then((res) => {
             console.log(res);
             this.list = res.data.list;

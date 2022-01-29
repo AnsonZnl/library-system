@@ -44,3 +44,24 @@ export function getBorrwoList(params) {
         params,
     });
 }
+export function getReturnList(params) {
+    return request({
+        url: `/books/returnList`,
+        method: "get",
+        params,
+    });
+}
+export function isPassBorrow(data) {
+    return request({
+        url: `/books/isPassBorrow`,
+        method: "post",
+        data,
+    });
+}
+export function isPassReturn(data) {
+    return request({
+        url: `/books/isPassReturn`,
+        method: "post",
+        data,
+    });
+}

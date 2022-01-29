@@ -50,26 +50,30 @@ router.post("/add", async function(ctx, next) {
         stock,
         // 当前书籍的状态
         status: {
-            statusCode: 1, // 1=空闲，2=借阅申请中，3=借阅中，4=还书申请中
-            userId: "", // 借阅的用户ID。
+            code: 1, // 申请中
+            userid: "",
+            bookid: "",
+            borrowDay: "",
+            account: "",
             startDate: "",
             endDate: "",
+            username: "",
+            bookname: "",
         },
     });
 
     /*
-                                                                                                                                                                              1=书籍空闲
-                                                                                                                                                                              学生申请借书（学生ID，书籍ID，借书日期，还书日期）
-                                                                                                                                                                              2=借阅申请
-                                                                                                                                                                              管理员审批后
-                                                                                                                                                                              3=借阅中
-                                                                                                                                                                              学员申请还书
-                                                                                                                                                                              4=还书申请中
-                                                                                                                                                                              管理员审批后
-                                                                                                                                                                              1=书籍空闲
-                                                                                                                                                                              
-
-                                                                                                                                                                      */
+    1=书籍空闲
+    学生申请借书（学生ID，书籍ID，借书日期，还书日期）
+    2=借阅申请
+    管理员审批后
+    3=借阅中
+    学员申请还书
+    4=还书申请中
+    管理员审批后
+    1=书籍空闲
+    5=已归还
+*/
     ctx.body = {
         code: 20000,
         data: "success",
@@ -88,10 +92,7 @@ router.get("/addDouBookInfo", async(ctx, next) => {
             bookClass: bookinfo.tag[1],
             isbn,
             status: {
-                code: 0, // 0=空闲，1=借阅
-                userId: "", // 借阅的用户ID。
-                startDate: "",
-                endDate: "",
+                code: 1, // 0=空闲，1=借阅
             },
         },
         bookinfo
@@ -169,12 +170,12 @@ router.post("/borrow", async function(ctx, next) {
     console.log("====", body);
     let book = await studentDB.where({ _id: userid }).get();
     let user = await booksDB.where({ _id: bookid }).get();
-    console.log(body);
     let bookData = book.data[0];
     let userData = user.data[0];
 
     // 改用户状态
     let setData = {
+        borrwoId: genBooksId(30),
         code: 2, // 申请中
         userid,
         bookid,
@@ -193,7 +194,6 @@ router.post("/borrow", async function(ctx, next) {
     await booksDB.doc(bookid).update({
         status: _.set(setData),
     });
-    // 改书籍状态
 
     ctx.body = {
         code: 20000,
@@ -205,10 +205,9 @@ router.post("/borrow", async function(ctx, next) {
     ctx.status = 200;
 });
 // 借书列表
-
 router.get("/borrowList", async function(ctx, next) {
     let { page, size } = ctx.request.query; // 页数
-    let body = ctx.request.body; // 查询条件
+    // let body = ctx.request.body; // 查询条件
     size = Number(size);
     page = (Number(page) - 1) * size;
     // console.log("====", query);
@@ -261,17 +260,156 @@ router.get("/borrowList", async function(ctx, next) {
     };
     ctx.status = 200;
 });
-// 还书
-router.post("/rturn", async function(ctx, next) {
-    let body = ctx.request.body;
-    let _id = body._id;
-    delete body._id;
-    console.log("====", _id, body);
-    let res = await booksDB.doc(_id).update(body);
-    // console.log(_id, res, body);
+// 批准借书
+router.post("/isPassBorrow", async function(ctx, next) {
+    let { isPass, userid, bookid, id } = ctx.request.body; // 页数
+    // isPass = 3 = 批准
+    // isPss = 1 = 拒绝
+    let user = await studentDB.where({ _id: userid }).get();
+    let book = await booksDB.where({ _id: bookid }).get();
+    let bookData = book.data[0];
+    let userData = user.data[0];
+    console.log("bookData", bookData);
+    // 改书籍状态
+    let setData = bookData.status;
+    setData.code = isPass;
+    await booksDB.doc(bookid).update({
+        status: _.set(setData),
+    });
+    let bList = userData.info.borrwo;
+    bList.forEach((e) => {
+        if (e.borrwoId == id) {
+            e.code = isPass;
+        }
+    });
+    // 改用户状态
+    await studentDB.doc(userid).update({
+        info: {
+            borrwo: _.set(bList),
+            borrwoCount: isPass == 3 ? userData.info.borrwoCount - 1 : userData.info.borrwoCount,
+        },
+    });
     ctx.body = {
         code: 20000,
-        data: "success",
+        data: {
+            setData,
+            bList,
+        },
+    };
+    ctx.status = 200;
+});
+// 借书列表
+router.get("/returnList", async function(ctx, next) {
+    let { page, size } = ctx.request.query; // 页数
+    // let body = ctx.request.body; // 查询条件
+    size = Number(size);
+    page = (Number(page) - 1) * size;
+
+    // 待还中的书
+    let book = await booksDB
+        .where({
+            status: {
+                code: 4,
+            },
+        })
+        .skip(page)
+        .limit(size)
+        .get();
+
+    let count = await booksDB
+        .where({
+            status: {
+                code: 4,
+            },
+        })
+        .count();
+
+    ctx.body = {
+        code: 20000,
+        data: { list: book.data, total: count.total },
+    };
+    ctx.status = 200;
+});
+// 拒绝还书
+router.post("/isPassReturn", async function(ctx, next) {
+    let { isPass, userid, bookid, id } = ctx.request.body; // 页数
+    // isPass = 1 = 批准
+    // isPss = 3 = 拒绝
+    let user = await studentDB.where({ _id: userid }).get();
+    let book = await booksDB.where({ _id: bookid }).get();
+    let bookData = book.data[0];
+    let userData = user.data[0];
+    console.log("bookData", bookData);
+    // 改书籍状态
+    let setData = bookData.status;
+    setData.code = isPass;
+    await booksDB.doc(bookid).update({
+        status: _.set(setData),
+    });
+    let bList = userData.info.borrwo;
+    bList.forEach((e) => {
+        if (e.borrwoId == id) {
+            e.code = isPass;
+        }
+    });
+    // 改用户状态
+    await studentDB.doc(userid).update({
+        info: {
+            borrwo: _.set(bList),
+            borrwoCount: isPass == 3 ? userData.info.borrwoCount - 1 : userData.info.borrwoCount,
+        },
+    });
+    ctx.body = {
+        code: 20000,
+        data: {
+            setData,
+            bList,
+        },
+    };
+    ctx.status = 200;
+});
+// 还书
+router.post("/return", async function(ctx, next) {
+    let body = ctx.request.body;
+    // console.log();
+    let { userid, bookid, id } = body;
+
+    console.log("====", body);
+    let user = await studentDB.where({ _id: bookid }).get();
+    let book = await booksDB.where({ _id: userid }).get();
+    console.log("user", user, "book", book);
+    let bookData = book.data[0];
+    let userData = user.data[0];
+    // 改书籍状态
+    let setData = bookData.status;
+    setData.code = 4;
+    await booksDB.doc(bookid).update({
+        status: _.set(setData),
+    });
+    let bList = userData.info.borrwo;
+    bList.forEach((e) => {
+        if (e.borrwoId == id) {
+            e.code = 4;
+        }
+    });
+
+    // 改用户状态
+    await studentDB.doc(bookid).update({
+        info: {
+            borrwo: _.set(bList),
+        },
+    });
+    // 改书籍状态
+    await booksDB.doc(userid).update({
+        status: _.set(setData),
+    });
+
+    ctx.body = {
+        code: 20000,
+        data: {
+            bookData,
+            userData,
+        },
     };
     ctx.status = 200;
 });

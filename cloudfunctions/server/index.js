@@ -10,6 +10,8 @@ const index = require('./routes/index')
 const user = require('./routes/user')
 const books = require("./routes/books");
 const student = require("./routes/student");
+const feedback = require("./routes/feedback");
+const notice = require("./routes/notice");
 // error handler
 onerror(app)
 app.use(cors());
@@ -38,6 +40,8 @@ app.use(index.routes(), index.allowedMethods())
 app.use(user.routes(), user.allowedMethods())
 app.use(books.routes(), books.allowedMethods());
 app.use(student.routes(), student.allowedMethods());
+app.use(feedback.routes(), feedback.allowedMethods());
+app.use(notice.routes(), notice.allowedMethods());
 
 // error-handling
 app.on('error', (err, ctx) => {

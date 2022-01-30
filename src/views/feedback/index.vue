@@ -24,21 +24,17 @@
           >重置</el-button
         >
       </el-form-item>
-      <el-form-item>
-        <el-button type="success" @click="showAddStudent = true"
-          >添加学生</el-button
-        >
-      </el-form-item>
+      
     </el-form>
     <el-table :data="list" border style="width: 100%; height: 100%">
       <el-table-column fixed="left" type="index" label="序号" width="50">
       </el-table-column>
-      <el-table-column prop="createTime" label="注册日期" width="170">
+      <el-table-column prop="createTime" label="留言注册" width="170">
       </el-table-column>
       <el-table-column prop="username" label="学生名称"> </el-table-column>
       <el-table-column prop="account" label="学生账号"> </el-table-column>
-      <el-table-column prop="info.borrwoCount" label="可借数量">
-      </el-table-column>
+      <el-table-column prop="title" label="留言标题"></el-table-column>
+      <el-table-column prop="content" label="留言内容"></el-table-column>
 
       <el-table-column fixed="right" label="操作" width="150">
         <template slot-scope="scope">
@@ -55,38 +51,10 @@
       </el-table-column>
     </el-table>
     <div class="block">
-      <Pagination :page="listPage" @onPaging="getStudentList" />
+      <Pagination :page="listPage" @onPaging="getList" />
     </div>
 
-    <el-dialog title="添加学生" :visible.sync="showAddStudent">
-      <el-form ref="addForm" :model="studentForm" label-width="120px">
-        <el-form-item label="学生姓名">
-          <el-input
-            size="medium"
-            placeholder="请输入学生姓名"
-            v-model="studentForm.username"
-          />
-        </el-form-item>
-        <el-form-item label="学生账号">
-          <el-input
-            size="medium"
-            placeholder="请输入学生账号"
-            v-model="studentForm.account"
-          />
-        </el-form-item>
-        <el-form-item label="学生密码">
-          <el-input
-            size="medium"
-            placeholder="请输入学生密码"
-            v-model="studentForm.password"
-          />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="onAddStudent">确定</el-button>
-          <el-button @click="showAddStudent = false">取消</el-button>
-        </el-form-item>
-      </el-form>
-    </el-dialog>
+
     <el-dialog title="学生详情" :visible.sync="showBooksDetail">
       <el-descriptions :column="4" size="medium" border>
         <el-descriptions-item label="学生名称">{{
@@ -118,12 +86,9 @@
 </template>
 
 <script>
-  import {
-    getList,
-    addStudent,
-    studentInfo,
-    removeStudent,
-  } from "@/api/student";
+  import {getFeedbackList,
+removeFeedback
+  } from "@/api/feedback";
 
   import Pagination from "../../components/Pagination";
 
@@ -149,11 +114,7 @@
           username: "",
           account: "",
         },
-        studentForm: {
-          username: "",
-          account: "",
-          password: "",
-        },
+        
         detailData: {
           info: {
             borrwo: [{
@@ -167,7 +128,7 @@
       };
     },
     created() {
-      this.getStudentList(1);
+      this.getList(1);
     },
     methods: {
       async studentDetail(row) {
@@ -180,18 +141,18 @@
       async onRemoveStudent(row) {
         console.log(row);
         let id = row._id;
-        await removeStudent({ id });
+        await removeFeedback({ id });
         this.$message({
           message: "删除成功",
           type: "success",
         });
-        this.getStudentList(1);
+        this.getList(1);
       },
-      async getStudentList(one) {
+      async getList(one) {
         if (one) {
           this.listPage.current = 1;
         }
-        let res = await getList(
+        let res = await getFeedbackList(
           {
             page: one ? 1 : this.listPage.current,
             size: this.listPage.page_size,
@@ -210,7 +171,7 @@
       },
       async searchStudent() {
         console.log("searchData", this.searchData);
-        let res = await getList(
+        let res = await getFeedbackList(
           {
             page: 1,
             size: this.listPage.page_size,
@@ -223,18 +184,11 @@
         this.list.forEach((e) => {
           let d = new Date(e.createTime);
           e.createTime = d.toLocaleDateString() + d.toLocaleTimeString();
-          if (e.summary) {
-            e.summary = e.summary.slice(0, 10) + "....";
-          }
+        
+        
         });
       },
-      async onAddStudent() {
-        this.showAddStudent = false;
-        this.$refs.addForm.resetFields();
-        await addStudent(this.studentForm);
-        this.$message.success("添加成功！");
-        await this.getStudentList(1);
-      },
+      
     },
   };
 </script>

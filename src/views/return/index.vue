@@ -48,7 +48,7 @@
         >
       </el-form-item>
     </el-form> -->
-    <h2>借书申请列表</h2>
+    <h2>还书申请列表</h2>
     <el-table :data="list" border style="width: 100%">
       <el-table-column fixed prop="status.username" label="学生姓名" width="">
       </el-table-column>

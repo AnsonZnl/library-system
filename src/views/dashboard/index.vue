@@ -3,8 +3,12 @@
     <h3 class="top-title">数据统计</h3>
     <PanelGroop :vd="topData" />
     <!-- 设备表格 -->
-    <h3 class="top-title">借阅统计</h3>
-    <el-row class="tablediv" ref="tableContainer">
+    <!-- <h3 class="top-title">借阅统计</h3> -->
+
+<div style="height:30px;"></div>
+    <div id="myChart3" :style="{ width: '100%', height: '500px' }"></div>
+
+    <!-- <el-row class="tablediv" ref="tableContainer">
       <el-col :span="24">
         <el-table
           :data="deviceList"
@@ -16,11 +20,7 @@
         >
           <el-table-column align="center" type="index" label="序号" width="50">
           </el-table-column>
-          <el-table-column
-            align="center"
-            prop="trainerName"
-            label="学生姓名"
-          >
+          <el-table-column align="center" prop="trainerName" label="学生姓名">
           </el-table-column>
           <el-table-column align="center" prop="deviceId" label="学生账号">
           </el-table-column>
@@ -28,10 +28,9 @@
           </el-table-column>
           <el-table-column align="center" prop="examTotal" label="借阅时长">
           </el-table-column>
-         
         </el-table>
       </el-col>
-    </el-row>
+    </el-row> -->
   </div>
 </template>
 
@@ -49,10 +48,10 @@
         version: this.VERSION,
         tableHeight: 0, // 表格高度
         topData: {
-          count: 10,
-          useTime: 20,
-          errCount: 30,
-          useDevice: 40,
+          count: 11280,
+          useTime: 2420,
+          errCount: 3405,
+          useDevice: 340,
         },
         deviceList: [],
         deviceName: "", // 当前设备名称
@@ -74,6 +73,13 @@
       };
     },
 
+    mounted() {
+      setTimeout(()=>{
+
+      this.drawLine();
+      }, 1000)
+    },
+
     methods: {
       getHeight() {
         this.tableHeight = 300;
@@ -86,6 +92,67 @@
             self.tableHeight =
               window.innerHeight - self.$refs.tableContainer.$el.offsetTop;
           };
+        });
+      },
+      getDay(day){
+    var today = new Date();
+    function doHandleMonth(month){
+    var m = month;
+    if(month.toString().length == 1){
+     m = "0" + month;
+    }
+    return m;
+}
+    var targetday_milliseconds=today.getTime() + 1000*60*60*24*day;
+    today.setTime(targetday_milliseconds); //注意，这行是关键代码
+    var tYear = today.getFullYear();
+    var tMonth = today.getMonth();
+    var tDate = today.getDate();
+    tMonth = doHandleMonth(tMonth + 1);
+    tDate = doHandleMonth(tDate);
+    return tYear+"-"+tMonth+"-"+tDate;
+},
+      drawLine() {
+        console.log('this.$echarts',this.$echarts);
+        // 基于准备好的dom，初始化echarts实例
+        let myChart3 = this.$echarts.init(document.getElementById("myChart3"));
+        // 绘制图表
+        myChart3.setOption({
+          title: { text: "借阅统计" }, //图表标题
+
+          tooltip: {},
+          xAxis: {
+            name: "日期", //x轴标题
+            data: [this.getDay(-6), this.getDay(-5), this.getDay(-4), this.getDay(-3), this.getDay(-2), this.getDay(-1), this.getDay(0)], ////x轴数据
+          },
+          yAxis: {
+            name: "本", //y轴标题
+            type: "value",
+          },
+          series: [
+            {
+              type: "bar", //图表形状
+              //柱状图的颜色
+              itemStyle: {
+                normal: {
+                  color: "#5470c6",
+                },
+              },
+              barWidth: 30, //柱图宽度
+              data: [60, 45, 80, 13, 23, 54, 24], //图表数据
+            },
+            {
+              type: "bar", //图表形状
+              //柱状图的颜色
+              itemStyle: {
+                normal: {
+                  color: "#91cc75",
+                },
+              },
+              barWidth: 30, //柱图宽度
+              data: [72, 35, 42, 27, 15, 36, 64], //图表数据
+            },
+          ],
         });
       },
     },

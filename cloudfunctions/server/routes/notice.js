@@ -67,7 +67,7 @@ router.get("/show", async function(ctx, next) {
     ctx.status = 200;
 });
 
-// 学生端，得到公告
+// 读者端，得到公告
 router.get("/get", async function(ctx, next) {
     const res = await noticesDB
         .where({

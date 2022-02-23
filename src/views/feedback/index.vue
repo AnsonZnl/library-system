@@ -1,17 +1,17 @@
 <template>
   <div class="app-container">
     <el-form ref="form1" :inline="true" :model="searchData" label-width="100px">
-      <el-form-item label="学生姓名">
+      <el-form-item label="读者姓名">
         <el-input
           size="medium"
-          placeholder="请输入学生姓名"
+          placeholder="请输入读者姓名"
           v-model="searchData.username"
         />
       </el-form-item>
-      <el-form-item label="学生账号">
+      <el-form-item label="读者账号">
         <el-input
           size="medium"
-          placeholder="请输入学生账号"
+          placeholder="请输入读者账号"
           v-model="searchData.account"
         />
       </el-form-item>
@@ -31,8 +31,8 @@
       </el-table-column>
       <el-table-column prop="createTime" label="留言注册" width="170">
       </el-table-column>
-      <el-table-column prop="username" label="学生名称"> </el-table-column>
-      <el-table-column prop="account" label="学生账号"> </el-table-column>
+      <el-table-column prop="username" label="读者名称"> </el-table-column>
+      <el-table-column prop="account" label="读者账号"> </el-table-column>
       <el-table-column prop="title" label="留言标题"></el-table-column>
       <el-table-column prop="content" label="留言内容"></el-table-column>
 
@@ -55,15 +55,15 @@
     </div>
 
 
-    <el-dialog title="学生详情" :visible.sync="showBooksDetail">
+    <el-dialog title="读者详情" :visible.sync="showBooksDetail">
       <el-descriptions :column="4" size="medium" border>
-        <el-descriptions-item label="学生名称">{{
+        <el-descriptions-item label="读者名称">{{
           detailData.username
         }}</el-descriptions-item>
-        <el-descriptions-item label="学生账号">{{
+        <el-descriptions-item label="读者账号">{{
           detailData.account
         }}</el-descriptions-item>
-        <el-descriptions-item label="学生密码">{{
+        <el-descriptions-item label="读者密码">{{
           detailData.password
         }}</el-descriptions-item>
         <el-descriptions-item label="可借数量">{{

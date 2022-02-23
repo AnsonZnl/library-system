@@ -146,7 +146,7 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-    <el-dialog title="图书详情" :visible.sync="showBooksDetail">
+    <el-dialog title="图书详情" :visible.sync="showBooksDetail" :before-close="()=>{showBooksDetail = false;detailData = {}}">
       <img :src="detailData.images" style="width:300px;height:300px;" alt="">
       <el-descriptions :column="3" size="medium" border>
         <el-descriptions-item label="书籍名称">{{
@@ -243,7 +243,11 @@
         let _id = row._id;
         let res = await getList({ page: 1, size: 1 }, { _id });
         this.showBooksDetail = true;
-        this.detailData = res.data.list[0];
+        let data = res.data.list[0]
+        var img = data.images
+        data.images = img.replace(/https:/g,'https://images.weserv.nl/?url=');
+        this.detailData = data
+
       },
       async onRemoveBook(row) {
         console.log(row);

@@ -22,7 +22,7 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            学生数量
+            读者数量
           </div>
           <count-to :start-val="0" :end-val="vd.useTime || 0" suffix=" 名" :duration="3000" class="card-panel-num" />
         </div>

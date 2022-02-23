@@ -50,9 +50,9 @@
     </el-form> -->
     <h2>借书申请列表</h2>
     <el-table :data="list" border style="width: 100%">
-      <el-table-column fixed prop="status.username" label="学生姓名" width="">
+      <el-table-column fixed prop="status.username" label="读者姓名" width="">
       </el-table-column>
-      <el-table-column prop="status.account" label="学生账号">
+      <el-table-column prop="status.account" label="读者账号">
       </el-table-column>
       <el-table-column prop="name" label="书籍名称"> </el-table-column>
       <el-table-column prop="author" label="作者"> </el-table-column>

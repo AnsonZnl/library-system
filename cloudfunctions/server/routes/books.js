@@ -16,55 +16,55 @@ router.get("/", function(ctx, next) {
 
 // 增
 router.post("/add", async function(ctx, next) {
-    ctx.body = ctx.request.body;
-    let {
-        name,
-        isbn,
-        summary,
-        bookClass,
-        images,
-        rate,
-        tag,
-        shelfNumber,
-        author,
-        price,
-        doubanUrl,
-        publisher,
-        stock,
-    } = ctx.request.body;
-    await booksDB.add({
-        id: genBooksId(22),
-        createTime: Date.now(),
-        images,
-        publisher,
-        doubanUrl,
-        name,
-        rate,
-        tag,
-        isbn,
-        summary,
-        bookClass,
-        shelfNumber,
-        author,
-        price,
-        stock,
-        // 当前书籍的状态
-        status: {
-            code: 1, // 申请中
-            userid: "",
-            bookid: "",
-            borrowDay: "",
-            account: "",
-            startDate: "",
-            endDate: "",
-            username: "",
-            bookname: "",
-        },
-    });
+  ctx.body = ctx.request.body;
+  let {
+    name,
+    isbn,
+    summary,
+    bookClass,
+    images,
+    rate,
+    tag,
+    shelfNumber,
+    author,
+    price,
+    doubanUrl,
+    publisher,
+    stock,
+  } = ctx.request.body;
+  await booksDB.add({
+    id: genBooksId(22),
+    createTime: Date.now(),
+    images,
+    publisher,
+    doubanUrl,
+    name,
+    rate,
+    tag,
+    isbn,
+    summary,
+    bookClass,
+    shelfNumber,
+    author,
+    price,
+    stock,
+    // 当前书籍的状态
+    status: {
+      code: 1, // 申请中
+      userid: "",
+      bookid: "",
+      borrowDay: "",
+      account: "",
+      startDate: "",
+      endDate: "",
+      username: "",
+      bookname: "",
+    },
+  });
 
-    /*
+  /*
     1=书籍空闲
-    学生申请借书（学生ID，书籍ID，借书日期，还书日期）
+    读者申请借书（读者ID，书籍ID，借书日期，还书日期）
     2=借阅申请
     管理员审批后
     3=借阅中
@@ -74,11 +74,11 @@ router.post("/add", async function(ctx, next) {
     1=书籍空闲
     5=已归还
 */
-    ctx.body = {
-        code: 20000,
-        data: "success",
-    };
-    ctx.status = 200;
+  ctx.body = {
+    code: 20000,
+    data: "success",
+  };
+  ctx.status = 200;
 });
 // 添加豆瓣图书信息
 router.get("/addDouBookInfo", async(ctx, next) => {

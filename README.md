@@ -1,6 +1,6 @@
 # 图书馆管理系统
 
-[学生端地址](https://github.com/AnsonZnl/weApp-school-library)
+[读者端地址](https://github.com/AnsonZnl/weApp-school-library)
 
 ## License
 

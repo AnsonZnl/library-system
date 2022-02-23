@@ -20,9 +20,9 @@
         >
           <el-table-column align="center" type="index" label="序号" width="50">
           </el-table-column>
-          <el-table-column align="center" prop="trainerName" label="学生姓名">
+          <el-table-column align="center" prop="trainerName" label="读者姓名">
           </el-table-column>
-          <el-table-column align="center" prop="deviceId" label="学生账号">
+          <el-table-column align="center" prop="deviceId" label="读者账号">
           </el-table-column>
           <el-table-column align="center" prop="examTotal" label="借阅数量">
           </el-table-column>

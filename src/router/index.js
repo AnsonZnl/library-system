@@ -30,121 +30,124 @@ import Layout from '@/layout'
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
-export const constantRoutes = [{
-        path: "/login",
-        component: () =>
-            import ("@/views/login/index"),
-        hidden: true,
-    },
+export const constantRoutes = [
+  {
+    path: "/login",
+    component: () => import("@/views/login/index"),
+    hidden: true,
+  },
 
-    {
-        path: "/404",
-        component: () =>
-            import ("@/views/404"),
-        hidden: true,
-    },
+  {
+    path: "/404",
+    component: () => import("@/views/404"),
+    hidden: true,
+  },
 
-    {
-        path: "/",
-        component: Layout,
-        redirect: "/dashboard",
-        children: [{
-            path: "dashboard",
-            name: "Dashboard",
-            component: () =>
-                import ("@/views/dashboard/index"),
-            meta: { title: "首页", icon: "dashboard" },
-        }, ],
-    },
+  {
+    path: "/",
+    component: Layout,
+    redirect: "/dashboard",
+    children: [
+      {
+        path: "dashboard",
+        name: "Dashboard",
+        component: () => import("@/views/dashboard/index"),
+        meta: { title: "首页", icon: "dashboard" },
+      },
+    ],
+  },
 
-    {
-        path: "/books",
-        component: Layout,
-        children: [{
-            path: "index",
-            name: "Books",
-            component: () =>
-                import ("@/views/books/index"),
-            meta: {
-                title: "图书管理",
-                icon: "el-icon-notebook-2",
-            },
-        }, ],
-    },
-
-    {
-        path: "/borrow",
-        component: Layout,
-        redirect: "/borrow/borrow",
-        name: "Borrow",
+  {
+    path: "/books",
+    component: Layout,
+    children: [
+      {
+        path: "index",
+        name: "Books",
+        component: () => import("@/views/books/index"),
         meta: {
-            title: "借还管理",
-            icon: "el-icon-document",
+          title: "图书管理",
+          icon: "el-icon-notebook-2",
         },
-        children: [{
-                path: "borrow",
-                name: "Borrow",
-                component: () =>
-                    import ("@/views/borrow/index"),
-                meta: { title: "借书管理", icon: "" },
-            },
-            {
-                path: "return",
-                name: "Return",
-                component: () =>
-                    import ("@/views/return/index"),
-                meta: { title: "还书管理", icon: "" },
-            },
-        ],
-    },
+      },
+    ],
+  },
 
-    {
-        path: "/students",
-        component: Layout,
-        children: [{
-            path: "students",
-            name: "students",
-            component: () =>
-                import ("@/views/students/index"),
-            meta: {
-                title: "学生管理",
-                icon: "el-icon-user-solid",
-            },
-        }, ],
+  {
+    path: "/borrow",
+    component: Layout,
+    redirect: "/borrow/borrow",
+    name: "Borrow",
+    meta: {
+      title: "借还管理",
+      icon: "el-icon-document",
     },
+    children: [
+      {
+        path: "borrow",
+        name: "Borrow",
+        component: () => import("@/views/borrow/index"),
+        meta: { title: "借书管理", icon: "" },
+      },
+      {
+        path: "return",
+        name: "Return",
+        component: () => import("@/views/return/index"),
+        meta: { title: "还书管理", icon: "" },
+      },
+    ],
+  },
 
-    {
-        path: "/feedback",
-        component: Layout,
-        children: [{
-            path: "feedback",
-            name: "Feedback",
-            component: () =>
-                import ("@/views/feedback/index"),
-            meta: {
-                title: "留言管理",
-                icon: "el-icon-edit-outline",
-            },
-        }, ],
-    },
+  {
+    path: "/students",
+    component: Layout,
+    children: [
+      {
+        path: "students",
+        name: "students",
+        component: () => import("@/views/students/index"),
+        meta: {
+          title: "读者管理",
+          icon: "el-icon-user-solid",
+        },
+      },
+    ],
+  },
 
-    {
-        path: "/notice",
-        component: Layout,
-        children: [{
-            path: "notice",
-            name: "Notice",
-            component: () =>
-                import ("@/views/notice/index"),
-            meta: {
-                title: "公告管理",
-                icon: "el-icon-reading",
-            },
-        }, ],
-    },
+  {
+    path: "/feedback",
+    component: Layout,
+    children: [
+      {
+        path: "feedback",
+        name: "Feedback",
+        component: () => import("@/views/feedback/index"),
+        meta: {
+          title: "留言管理",
+          icon: "el-icon-edit-outline",
+        },
+      },
+    ],
+  },
 
-    // 404 page must be placed at the end !!!
-    { path: "*", redirect: "/404", hidden: true },
+  {
+    path: "/notice",
+    component: Layout,
+    children: [
+      {
+        path: "notice",
+        name: "Notice",
+        component: () => import("@/views/notice/index"),
+        meta: {
+          title: "公告管理",
+          icon: "el-icon-reading",
+        },
+      },
+    ],
+  },
+
+  // 404 page must be placed at the end !!!
+  { path: "*", redirect: "/404", hidden: true },
 ];
 
 const createRouter = () =>

@@ -1,17 +1,17 @@
 <template>
   <div class="app-container">
     <el-form ref="form1" :inline="true" :model="searchData" label-width="100px">
-      <el-form-item label="学生姓名">
+      <el-form-item label="读者姓名">
         <el-input
           size="medium"
-          placeholder="请输入学生姓名"
+          placeholder="请输入读者姓名"
           v-model="searchData.username"
         />
       </el-form-item>
-      <el-form-item label="学生账号">
+      <el-form-item label="读者账号">
         <el-input
           size="medium"
-          placeholder="请输入学生账号"
+          placeholder="请输入读者账号"
           v-model="searchData.account"
         />
       </el-form-item>
@@ -26,7 +26,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="success" @click="showAddStudent = true"
-          >添加学生</el-button
+          >添加读者</el-button
         >
       </el-form-item>
     </el-form>
@@ -35,8 +35,8 @@
       </el-table-column>
       <el-table-column prop="createTime" label="注册日期" width="170">
       </el-table-column>
-      <el-table-column prop="username" label="学生名称"> </el-table-column>
-      <el-table-column prop="account" label="学生账号"> </el-table-column>
+      <el-table-column prop="username" label="读者名称"> </el-table-column>
+      <el-table-column prop="account" label="读者账号"> </el-table-column>
       <el-table-column prop="info.borrwoCount" label="可借数量">
       </el-table-column>
 
@@ -58,26 +58,26 @@
       <Pagination :page="listPage" @onPaging="getStudentList" />
     </div>
 
-    <el-dialog title="添加学生" :visible.sync="showAddStudent">
+    <el-dialog title="添加读者" :visible.sync="showAddStudent">
       <el-form ref="addForm" :model="studentForm" label-width="120px">
-        <el-form-item label="学生姓名">
+        <el-form-item label="读者姓名">
           <el-input
             size="medium"
-            placeholder="请输入学生姓名"
+            placeholder="请输入读者姓名"
             v-model="studentForm.username"
           />
         </el-form-item>
-        <el-form-item label="学生账号">
+        <el-form-item label="读者账号">
           <el-input
             size="medium"
-            placeholder="请输入学生账号"
+            placeholder="请输入读者账号"
             v-model="studentForm.account"
           />
         </el-form-item>
-        <el-form-item label="学生密码">
+        <el-form-item label="读者密码">
           <el-input
             size="medium"
-            placeholder="请输入学生密码"
+            placeholder="请输入读者密码"
             v-model="studentForm.password"
           />
         </el-form-item>
@@ -87,15 +87,15 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-    <el-dialog title="学生详情" :visible.sync="showBooksDetail">
+    <el-dialog title="读者详情" :visible.sync="showBooksDetail">
       <el-descriptions :column="4" size="medium" border>
-        <el-descriptions-item label="学生名称">{{
+        <el-descriptions-item label="读者名称">{{
           detailData.username
         }}</el-descriptions-item>
-        <el-descriptions-item label="学生账号">{{
+        <el-descriptions-item label="读者账号">{{
           detailData.account
         }}</el-descriptions-item>
-        <el-descriptions-item label="学生密码">{{
+        <el-descriptions-item label="读者密码">{{
           detailData.password
         }}</el-descriptions-item>
         <el-descriptions-item label="可借数量">{{

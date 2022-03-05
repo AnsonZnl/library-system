@@ -6,6 +6,7 @@ const tcb = require("./../config/tcb");
 
 const db = tcb.database();
 const feedbackDB = db.collection("feedbacks");
+const studentDB = db.collection("students");
 
 const _ = db.command;
 const $ = db.command.aggregate;
@@ -16,19 +17,31 @@ router.get("/", function(ctx, next) {
 // 增
 router.post("/add", async function(ctx, next) {
     let { uid, username, title, content, account } = ctx.request.body;
-    await feedbackDB.add({
-        createTime: Date.now(),
-        uid,
-        username,
-        title,
-        content,
-        account,
-    });
-    ctx.body = {
-        code: 20000,
-        message: "success",
-    };
-    ctx.status = 200;
+
+    let data = await studentDB.where({ _id: uid })
+    if (data.length == 0) {
+        ctx.body = {
+            code: 20001,
+            message: "用户未注册",
+        };
+        ctx.status = 200;
+    } else {
+        await feedbackDB.add({
+            createTime: Date.now(),
+            uid,
+            username,
+            title,
+            content,
+            account,
+        });
+
+        ctx.body = {
+            code: 20000,
+            message: "success",
+        };
+        ctx.status = 200;
+    }
+
 });
 
 // 查

@@ -163,7 +163,7 @@ removeFeedback
         this.listPage.total = res.data.total;
         this.list.forEach((e) => {
           let d = new Date(e.createTime);
-          e.createTime = d.toLocaleDateString() + d.toLocaleTimeString();
+          e.createTime = d.toLocaleDateString()  +' '+  d.toLocaleTimeString();
           if (e.summary) {
             e.summary = e.summary.slice(0, 10) + "....";
           }
@@ -183,7 +183,7 @@ removeFeedback
         this.listPage.total = res.data.total;
         this.list.forEach((e) => {
           let d = new Date(e.createTime);
-          e.createTime = d.toLocaleDateString() + d.toLocaleTimeString();
+          e.createTime = d.toLocaleDateString()  +' '+  d.toLocaleTimeString();
         
         
         });

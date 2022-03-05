@@ -18,8 +18,9 @@ router.get("/", function(ctx, next) {
 router.post("/add", async function(ctx, next) {
     let { uid, username, title, content, account } = ctx.request.body;
 
-    let data = await studentDB.where({ _id: uid }).get();
-    if (data.length == 0) {
+    let res = await studentDB.where({ _id: uid }).get();
+    let data = res.data[0];
+    if (!data) {
         ctx.body = {
             code: 20001,
             message: "用户未注册",

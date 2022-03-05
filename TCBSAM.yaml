@@ -1,0 +1,69 @@
+TCBSAMFormatVersion: '2020-06-15'
+License: MIT
+Description: 基于 CloudBase Framework 构建
+Category: CloudApp
+Tags: []
+SourceUrl: 'https://github.com/Tencent/cloudbase-framework'
+ReleaseNotesUrl: 'https://github.com/Tencent/cloudbase-framework/releases'
+IconUrl: >-
+  https://main.qcloudimg.com/raw/f87b49914efe502722f9aa128f5d8865/hello_world.svg
+IntroUrl: 'https://cloud.tencent.com/document/product/876/44547'
+ChangeLog:
+  - Title: 1.0.0
+    Content:
+      - 初次发布
+Author:
+  AuthorName: Tencent CloudBase
+  Email: cloudbase@tencent.com
+  Url: 'https://github.com/Tencent/cloudbase-framework'
+Contributors:
+  - AuthorName: Tencent CloudBase
+    Email: cloudbase@tencent.com
+    Url: 'https://github.com/Tencent/cloudbase-framework'
+Name: library-system
+Version: 1.0.0
+DisplayName: library-system
+Globals:
+  Environment:
+    Variables: {}
+SourceDir: .
+EnvType: PostPay
+Resources:
+  Website:
+    Type: 'CloudBase::StaticStore'
+    Properties:
+      Description: 为开发者提供静态网页托管的能力，包括HTML、CSS、JavaScript、字体等常见资源。
+      CodeUri: 'extension://1da7d638fbd84cf3b7dfab4fee86aa17.zip'
+      DeployPath: /
+  ConfigEnv:
+    Type: 'CloudBase::StaticStore'
+    Properties:
+      Description: 配置文件
+      CodeUri: 'extension://d8258e26130b4e6ca09f481615591f83.zip'
+      DeployPath: /
+  Server:
+    Type: 'CloudBase::Function'
+    Properties:
+      Handler: tcbindex.main
+      Description: 无服务器执行环境，帮助您在无需购买和管理服务器的情况下运行代码
+      Runtime: Nodejs10.15
+      FunctionName: server
+      MemorySize: 128
+      Timeout: 5
+      Environment:
+        Variables: {}
+      VpcConfig: {}
+      InstallDependency: true
+      CodeUri: 'extension://b058f000a12443ddb7ff7d5f75e13f39.zip'
+      CodeSecret: false
+      Role: TCB_QcsRole
+      AclTag: CUSTOM
+      AclRule: '{"server":{"invoke":true}}'
+EntryPoint:
+  - Label: 网站入口
+    EntryType: StaticStore
+    HttpEntryPath: /
+Config:
+  Login:
+    - Platform: NONLOGIN
+      Status: ENABLE

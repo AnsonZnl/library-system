@@ -18,7 +18,7 @@ router.get("/", function(ctx, next) {
 router.post("/add", async function(ctx, next) {
     let { uid, username, title, content, account } = ctx.request.body;
 
-    let data = await studentDB.where({ _id: uid })
+    let data = await studentDB.where({ _id: uid }).get();
     if (data.length == 0) {
         ctx.body = {
             code: 20001,

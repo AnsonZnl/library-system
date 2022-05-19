@@ -176,7 +176,7 @@
   } from "@/api/books";
 
   import Pagination from "../../components/Pagination";
-
+import { Loading } from 'element-ui';
   export default {
     components: {
       Pagination,
@@ -234,9 +234,11 @@
         this.isEdit = true;
       },
       async onGetDouBookInfo() {
+        let loadingInstance1 = Loading.service({ fullscreen: true });
         let isbn = this.bookForm.isbn;
         let res = await getDouBookInfo({ isbn });
         this.bookForm = res.data;
+        loadingInstance1.close();
       },
       async bookDetail(row) {
         console.log(row._id);

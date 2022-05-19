@@ -48,10 +48,10 @@
         version: this.VERSION,
         tableHeight: 0, // 表格高度
         topData: {
-          count: 11280,
-          useTime: 2420,
-          errCount: 3405,
-          useDevice: 340,
+          count: 80,
+          useTime: 20,
+          errCount: 35,
+          useDevice: 9,
         },
         deviceList: [],
         deviceName: "", // 当前设备名称
@@ -139,7 +139,7 @@
                 },
               },
               barWidth: 30, //柱图宽度
-              data: [60, 45, 80, 13, 23, 54, 24], //图表数据
+              data: [6, 5, 8, 3, 2, 4, 2], //图表数据
             },
             {
               type: "bar", //图表形状
@@ -150,7 +150,7 @@
                 },
               },
               barWidth: 30, //柱图宽度
-              data: [72, 35, 42, 27, 15, 36, 64], //图表数据
+              data: [7, 5, 4, 2, 15, 6, 4], //图表数据
             },
           ],
         });

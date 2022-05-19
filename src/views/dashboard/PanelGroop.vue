@@ -4,7 +4,7 @@
       <div class="card-panel" @click="handleSetLineChartData('newVisitis')">
         <div class="card-panel-icon-wrapper icon-people">
           <!-- <svg-icon icon-class="peoples" class-name="card-panel-icon" /> -->
-          <i class="el-icon-user-solid"></i>
+          <i class="el-icon-notebook-2"></i>
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
@@ -18,7 +18,7 @@
       <div class="card-panel" @click="handleSetLineChartData('messages')">
         <div class="card-panel-icon-wrapper icon-message">
           <!-- <svg-icon icon-class="message" class-name="card-panel-icon" /> -->
-          <i class="el-icon-alarm-clock"></i>
+          <i class="el-icon-user-solid"></i>
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
@@ -32,7 +32,7 @@
       <div class="card-panel" @click="handleSetLineChartData('purchases')">
         <div class="card-panel-icon-wrapper icon-money">
           <!-- <svg-icon icon-class="money" class-name="card-panel-icon" /> -->
-          <i class="el-icon-warning"></i>
+          <i class="el-icon-document-copy"></i>
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
@@ -46,7 +46,7 @@
       <div class="card-panel" @click="handleSetLineChartData('shoppings')">
         <div class="card-panel-icon-wrapper icon-shopping">
           <!-- <svg-icon icon-class="shopping" class-name="card-panel-icon" /> -->
-          <i class="el-icon-s-platform"></i>
+          <i class="el-icon-edit-outline"></i>
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">

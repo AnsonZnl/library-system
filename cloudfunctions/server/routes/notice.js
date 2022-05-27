@@ -22,11 +22,8 @@ router.post("/add", async function(ctx, next) {
         title,
         content,
     });
-    ctx.body = {
-        code: 20000,
-        message: "success",
-    };
-    ctx.status = 200;
+    ctx.body = "success"
+
 });
 
 // 查
@@ -43,10 +40,10 @@ router.post("/list", async function(ctx, next) {
     let res = await noticesDB.where(body).skip(page).limit(size).get();
     let count = await noticesDB.where(body).count();
     ctx.body = {
-        code: 20000,
-        data: { list: res.data, total: count.total },
+        list: res.data,
+        total: count.total
     };
-    ctx.status = 200;
+
 });
 
 // 设置显示
@@ -60,11 +57,9 @@ router.get("/show", async function(ctx, next) {
         isShow: true,
     });
 
-    ctx.body = {
-        code: 20000,
-        data: res.data,
-    };
-    ctx.status = 200;
+    ctx.body = {...res.data }
+
+
 });
 
 // 读者端，得到公告
@@ -75,11 +70,8 @@ router.get("/get", async function(ctx, next) {
         })
         .get();
 
-    ctx.body = {
-        code: 20000,
-        data: res.data[0],
-    };
-    ctx.status = 200;
+    ctx.body = res.data[0]
+
 });
 
 // 删
@@ -87,10 +79,7 @@ router.get("/remove", async function(ctx, next) {
     let { id } = ctx.request.query;
     // 删一条 基于_id 去删除
     const res = await noticesDB.doc(id).remove();
-    ctx.body = {
-        code: 20000,
-        data: res.data,
-    };
-    ctx.status = 200;
+    ctx.body = 'ok'
+
 });
 module.exports = router;

@@ -16,53 +16,53 @@ router.get("/", function(ctx, next) {
 
 // 增
 router.post("/add", async function(ctx, next) {
-  ctx.body = ctx.request.body;
-  let {
-    name,
-    isbn,
-    summary,
-    bookClass,
-    images,
-    rate,
-    tag,
-    shelfNumber,
-    author,
-    price,
-    doubanUrl,
-    publisher,
-    stock,
-  } = ctx.request.body;
-  await booksDB.add({
-    id: genBooksId(22),
-    createTime: Date.now(),
-    images,
-    publisher,
-    doubanUrl,
-    name,
-    rate,
-    tag,
-    isbn,
-    summary,
-    bookClass,
-    shelfNumber,
-    author,
-    price,
-    stock,
-    // 当前书籍的状态
-    status: {
-      code: 1, // 申请中
-      userid: "",
-      bookid: "",
-      borrowDay: "",
-      account: "",
-      startDate: "",
-      endDate: "",
-      username: "",
-      bookname: "",
-    },
-  });
+    ctx.body = ctx.request.body;
+    let {
+        name,
+        isbn,
+        summary,
+        bookClass,
+        images,
+        rate,
+        tag,
+        shelfNumber,
+        author,
+        price,
+        doubanUrl,
+        publisher,
+        stock,
+    } = ctx.request.body;
+    await booksDB.add({
+        id: genBooksId(22),
+        createTime: Date.now(),
+        images,
+        publisher,
+        doubanUrl,
+        name,
+        rate,
+        tag,
+        isbn,
+        summary,
+        bookClass,
+        shelfNumber,
+        author,
+        price,
+        stock,
+        // 当前书籍的状态
+        status: {
+            code: 1, // 申请中
+            userid: "",
+            bookid: "",
+            borrowDay: "",
+            account: "",
+            startDate: "",
+            endDate: "",
+            username: "",
+            bookname: "",
+        },
+    });
 
-  /*
+    /*
     1=书籍空闲
     读者申请借书（读者ID，书籍ID，借书日期，还书日期）
     2=借阅申请
@@ -74,11 +74,8 @@ router.post("/add", async function(ctx, next) {
     1=书籍空闲
     5=已归还
 */
-  ctx.body = {
-    code: 20000,
-    data: "success",
-  };
-  ctx.status = 200;
+    ctx.body = "success"
+
 });
 // 添加豆瓣图书信息
 router.get("/addDouBookInfo", async(ctx, next) => {
@@ -99,11 +96,8 @@ router.get("/addDouBookInfo", async(ctx, next) => {
     );
     console.log("data", data);
     // await booksDB.add(data)
-    ctx.body = {
-        code: 20000,
-        data: data,
-    };
-    ctx.status = 200;
+    ctx.body = data
+
 });
 // 删
 router.get("/remove", async function(ctx, next) {
@@ -116,12 +110,8 @@ router.get("/remove", async function(ctx, next) {
     //         stock: 5,
     //     })
     //     .remove();
-
-    ctx.body = {
-        code: 20000,
-        data: res.data,
-    };
-    ctx.status = 200;
+    ctx.status = 200
+    ctx.body = 'ok'
 });
 // 改
 router.post("/update", async function(ctx, next) {
@@ -131,11 +121,7 @@ router.post("/update", async function(ctx, next) {
     console.log("====", _id, body);
     let res = await booksDB.doc(_id).update(body);
     // console.log(_id, res, body);
-    ctx.body = {
-        code: 20000,
-        data: "success",
-    };
-    ctx.status = 200;
+    ctx.body = "success"
 });
 // 查
 router.post("/query", async function(ctx, next) {
@@ -150,11 +136,8 @@ router.post("/query", async function(ctx, next) {
     console.log(body);
     let res = await booksDB.where(body).skip(page).limit(size).get();
     let count = await booksDB.where(body).count();
-    ctx.body = {
-        code: 20000,
-        data: { list: res.data, total: count.total },
-    };
-    ctx.status = 200;
+    ctx.body = { list: res.data, total: count.total }
+
 });
 // 借书
 router.post("/borrow", async function(ctx, next) {
@@ -196,13 +179,10 @@ router.post("/borrow", async function(ctx, next) {
     });
 
     ctx.body = {
-        code: 20000,
-        data: {
-            bookData,
-            userData,
-        },
-    };
-    ctx.status = 200;
+        bookData,
+        userData,
+    }
+
 });
 // 借书列表
 router.get("/borrowList", async function(ctx, next) {
@@ -254,11 +234,9 @@ router.get("/borrowList", async function(ctx, next) {
     //     }
     // }
 
-    ctx.body = {
-        code: 20000,
-        data: { list: book.data, total: count.total },
-    };
-    ctx.status = 200;
+    ctx.body = { list: book.data, total: count.total }
+
+
 });
 // 批准借书
 router.post("/isPassBorrow", async function(ctx, next) {
@@ -290,13 +268,10 @@ router.post("/isPassBorrow", async function(ctx, next) {
         },
     });
     ctx.body = {
-        code: 20000,
-        data: {
-            setData,
-            bList,
-        },
+        setData,
+        bList,
     };
-    ctx.status = 200;
+
 });
 // 借书列表
 router.get("/returnList", async function(ctx, next) {
@@ -324,11 +299,9 @@ router.get("/returnList", async function(ctx, next) {
         })
         .count();
 
-    ctx.body = {
-        code: 20000,
-        data: { list: book.data, total: count.total },
-    };
-    ctx.status = 200;
+    ctx.body = { list: book.data, total: count.total }
+
+
 });
 // 拒绝还书
 router.post("/isPassReturn", async function(ctx, next) {
@@ -360,13 +333,10 @@ router.post("/isPassReturn", async function(ctx, next) {
         },
     });
     ctx.body = {
-        code: 20000,
-        data: {
-            setData,
-            bList,
-        },
-    };
-    ctx.status = 200;
+        setData,
+        bList,
+    }
+
 });
 // 还书
 router.post("/return", async function(ctx, next) {
@@ -405,12 +375,9 @@ router.post("/return", async function(ctx, next) {
     });
 
     ctx.body = {
-        code: 20000,
-        data: {
-            bookData,
-            userData,
-        },
+        bookData,
+        userData,
     };
-    ctx.status = 200;
+
 });
 module.exports = router;

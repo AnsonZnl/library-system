@@ -25,7 +25,7 @@ router.post("/add", async function(ctx, next) {
             code: 20001,
             message: "用户未注册",
         };
-        ctx.status = 200;
+
     } else {
         await feedbackDB.add({
             createTime: Date.now(),
@@ -36,11 +36,9 @@ router.post("/add", async function(ctx, next) {
             account,
         });
 
-        ctx.body = {
-            code: 20000,
-            message: "success",
-        };
-        ctx.status = 200;
+        ctx.body = "success"
+
+
     }
 
 });
@@ -59,10 +57,10 @@ router.post("/list", async function(ctx, next) {
     let res = await feedbackDB.where(body).skip(page).limit(size).get();
     let count = await feedbackDB.where(body).count();
     ctx.body = {
-        code: 20000,
-        data: { list: res.data, total: count.total },
+        list: res.data,
+        total: count.total
     };
-    ctx.status = 200;
+
 });
 
 // 删
@@ -70,10 +68,6 @@ router.get("/remove", async function(ctx, next) {
     let { id } = ctx.request.query;
     // 删一条 基于_id 去删除
     const res = await feedbackDB.doc(id).remove();
-    ctx.body = {
-        code: 20000,
-        data: res.data,
-    };
-    ctx.status = 200;
+    ctx.body = 'ok'
 });
 module.exports = router;

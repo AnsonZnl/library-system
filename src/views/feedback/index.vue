@@ -29,7 +29,7 @@
     <el-table :data="list" border style="width: 100%; height: 100%">
       <el-table-column fixed="left" type="index" label="序号" width="50">
       </el-table-column>
-      <el-table-column prop="createTime" label="留言注册" width="170">
+      <el-table-column prop="createTime" label="留言时间" width="170">
       </el-table-column>
       <el-table-column prop="username" label="读者名称"> </el-table-column>
       <el-table-column prop="account" label="读者账号"> </el-table-column>
@@ -55,31 +55,20 @@
     </div>
 
 
-    <el-dialog title="读者详情" :visible.sync="showBooksDetail">
-      <el-descriptions :column="4" size="medium" border>
-        <el-descriptions-item label="读者名称">{{
-          detailData.username
+    <el-dialog title="留言详情" :visible.sync="showBooksDetail">
+      <el-descriptions :column="1" size="medium" border>
+        <el-descriptions-item label="留言时间">{{
+          detailData.createTime
         }}</el-descriptions-item>
-        <el-descriptions-item label="读者账号">{{
+        <el-descriptions-item label="留言读者账号">{{
           detailData.account
         }}</el-descriptions-item>
-        <el-descriptions-item label="读者密码">{{
-          detailData.password
+        <el-descriptions-item label="留言标题">{{
+          detailData.title
         }}</el-descriptions-item>
-        <el-descriptions-item label="可借数量">{{
-          detailData.info.borrwoCount
+        <el-descriptions-item label="留言内容">{{
+          detailData.content
         }}</el-descriptions-item>
-        <el-table
-          :data="detailData.info.borrwo"
-          border
-          style="width: 100%; height: 100%"
-        >
-          <el-table-column fixed="left" type="index" label="序号" width="50">
-          </el-table-column>
-          <el-table-column prop="bookId" label="书籍ID"></el-table-column>
-          <el-table-column prop="startDate" label="开始日期"></el-table-column>
-          <el-table-column prop="endDate" label="还书日期"></el-table-column>
-        </el-table>
       </el-descriptions>
     </el-dialog>
   </div>
@@ -89,7 +78,6 @@
   import {getFeedbackList,
 removeFeedback
   } from "@/api/feedback";
-
   import Pagination from "../../components/Pagination";
 
   export default {
@@ -132,11 +120,11 @@ removeFeedback
     },
     methods: {
       async studentDetail(row) {
-        console.log(row._id);
-        let _id = row._id;
-        let res = await studentInfo({ _id });
+        // console.log(row._id);
+        // let _id = row._id;
+        // let res = await studentInfo({ _id });
         this.showBooksDetail = true;
-        this.detailData = res.data;
+        this.detailData = row;
       },
       async onRemoveStudent(row) {
         console.log(row);

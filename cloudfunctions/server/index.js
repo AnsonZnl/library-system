@@ -6,6 +6,8 @@ const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 const cors = require("koa-cors");
+const [mdResHandler, mdErrorHandler] = require('./middlewares/index')
+    // routes
 const index = require('./routes/index')
 const user = require('./routes/user')
 const books = require("./routes/books");
@@ -15,9 +17,12 @@ const notice = require("./routes/notice");
 // error handler
 onerror(app)
 app.use(cors());
+
 // middlewares
+app.use(mdResHandler)
+app.use(mdErrorHandler)
 app.use(bodyparser({
-    enableTypes: ['json', 'form', 'text']
+    enableTypes: ['json', 'form', 'text'],
 }))
 app.use(json())
 app.use(logger())
@@ -45,7 +50,15 @@ app.use(notice.routes(), notice.allowedMethods());
 
 // error-handling
 app.on('error', (err, ctx) => {
-    console.error('server error', err, ctx)
+    if (ctx) {
+        ctx.body = {
+            code: 502,
+            message: `程序运行时报错：${err.message}`
+        };
+    } else {
+        console.error('server error', err, ctx)
+    }
 });
+
 
 module.exports = app

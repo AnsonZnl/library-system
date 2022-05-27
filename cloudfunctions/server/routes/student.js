@@ -27,7 +27,6 @@ router.post("/login", async function(ctx, next) {
         };
     } else if (data.password == password) {
         ctx.body = {
-            code: 20000,
             message: "success",
             data: {
                 token: "student-token",
@@ -40,7 +39,7 @@ router.post("/login", async function(ctx, next) {
             message: "账号密码错误",
         };
     }
-    ctx.status = 200;
+
 });
 // 注册
 router.post("/register", async function(ctx, next) {
@@ -64,23 +63,19 @@ router.post("/register", async function(ctx, next) {
         // },
     });
     ctx.body = {
-        code: 20000,
         message: "success",
         data: {
             token: "student-token",
         },
     };
-    ctx.status = 200;
+
 });
 // 查看
 router.get("/info", async function(ctx, next) {
     let { _id } = ctx.request.query;
     let res = await studentDB.where({ _id }).get()
-    ctx.body = {
-        code: 20000,
-        data: res.data[0]
-    };
-    ctx.status = 200;
+    ctx.body = res.data.length ? res.data[0] : []
+
 });
 // 列表
 router.post("/list", async function(ctx, next) {
@@ -95,20 +90,14 @@ router.post("/list", async function(ctx, next) {
 
     let res = await studentDB.where(body).skip(page).limit(size).get();
     let count = await studentDB.where(body).count();
-    ctx.body = {
-        code: 20000,
-        data: { list: res.data, total: count.total },
-    };
-    ctx.status = 200;
+    ctx.body = { list: res.data, total: count.total }
+
 });
 // 删除
 router.get("/remove", async function(ctx, next) {
     let { id } = ctx.request.query;
     let res = await studentDB.doc(id).remove();
-    ctx.body = {
-        code: 20000,
-        data: res
-    };
-    ctx.status = 200;
+    ctx.body = 'ok'
+
 });
 module.exports = router;
